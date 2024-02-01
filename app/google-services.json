@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "981089134294",
+    "project_id": "bar-cocktails",
+    "storage_bucket": "bar-cocktails.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981089134294:android:bd80a1cc8344f54e8d0b77",
+        "android_client_info": {
+          "package_name": "com.dk.barcocktails"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDS4dmiM1FcaE3mGLV1pl7k77yjKaVJx4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
