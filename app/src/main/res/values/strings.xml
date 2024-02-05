@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Bar Cocktails</string>
     <string name="email">Email</string>
+    <string name="name">Name</string>
     <string name="password">Password</string>
+    <string name="repeat_password">Repeat password</string>
     <string name="require_field">Require field</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
@@ -9,4 +11,10 @@
     <string name="profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name_cocktail">Name</string>
+    <string name="method_cocktail">Method</string>
+    <string name="garnier_cocktail">Garnier</string>
+    <string name="add_cocktail">Add cocktail</string>
+    <string name="value">Value</string>
+    <string name="name_ingredient">Name Ingredient</string>
 </resources>

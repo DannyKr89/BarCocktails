@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.dk.barcocktails.ui.signinsignup.LoginFragment"
-        android:label="fragment_login"
+        android:label="Login"
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_cocktailsFragment"
@@ -20,15 +20,24 @@
     <fragment
         android:id="@+id/cocktails_list"
         android:name="com.dk.barcocktails.ui.cocktails.CocktailsFragment"
-        android:label="fragment_cocktails"
-        tools:layout="@layout/fragment_cocktails" />
+        android:label="Cocktails"
+        tools:layout="@layout/fragment_cocktails">
+        <action
+            android:id="@+id/action_cocktails_list_to_newCocktailFragment"
+            app:destination="@id/newCocktailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profile"
         android:name="com.dk.barcocktails.ui.profile.ProfileFragment"
-        android:label="fragment_profile"
+        android:label="Profile"
         tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profile_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/newCocktailFragment"
+        android:name="com.dk.barcocktails.ui.newcocktail.NewCocktailFragment"
+        android:label="Add new cocktail"
+        tools:layout="@layout/fragment_new_cocktail" />
 </navigation>

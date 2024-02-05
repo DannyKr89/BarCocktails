@@ -29,7 +29,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViewModel()
         initViews()
     }
@@ -72,9 +71,9 @@ class LoginFragment : Fragment() {
                 val email = etEmail.text.toString()
                 val password = etPassword.text.toString()
 
-                if (etEmail.text.isEmpty()) {
+                if (etEmail.text.isNullOrEmpty()) {
                     etEmail.error = resources.getString(R.string.require_field)
-                } else if (etPassword.text.isEmpty()) {
+                } else if (etPassword.text.isNullOrEmpty()) {
                     etPassword.error = resources.getString(R.string.require_field)
                 } else {
                     viewModel.signInRequest(email, password)
@@ -84,9 +83,9 @@ class LoginFragment : Fragment() {
                 val email = etEmail.text.toString()
                 val password = etPassword.text.toString()
 
-                if (etEmail.text.isEmpty()) {
+                if (etEmail.text.isNullOrEmpty()) {
                     etEmail.error = resources.getString(R.string.require_field)
-                } else if (etPassword.text.isEmpty()) {
+                } else if (etPassword.text.isNullOrEmpty()) {
                     etPassword.error = resources.getString(R.string.require_field)
                 } else {
                     viewModel.signUpRequest(email, password)

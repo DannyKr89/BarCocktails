@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.isTitleCentered = true
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
@@ -31,11 +33,17 @@ class MainActivity : AppCompatActivity() {
 
         binding.navView.setupWithNavController(navController)
 
+
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.navView.isVisible = destination.id != R.id.loginFragment
+            with(binding) {
+                navView.isVisible = destination.id != R.id.loginFragment
+                toolbar.isVisible = destination.id != R.id.loginFragment
+            }
+            supportActionBar?.title = destination.label
         }
 
-        if (firebaseAuth.currentUser != null) {
+        if (firebaseAuth.currentUser != null && savedInstanceState == null) {
             navController.navigate(R.id.action_loginFragment_to_cocktailsFragment)
         }
     }
