@@ -14,12 +14,14 @@ import com.dk.barcocktails.ui.signinsignup.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
     single { FirebaseAuth.getInstance() }
     single { Firebase.firestore }
+    single { Firebase.storage }
 }
 
 val loginModule = module {
@@ -31,7 +33,7 @@ val loginModule = module {
 }
 
 val cocktailsModule = module {
-    single<CocktailsRepository> { CocktailsRepositoryImpl(get(), get()) }
+    single<CocktailsRepository> { CocktailsRepositoryImpl(get(), get(), get()) }
     single<GetCocktailsUseCase> { GetCocktailsUseCase(get()) }
     viewModel<CocktailsViewModel> { CocktailsViewModel(get()) }
 }

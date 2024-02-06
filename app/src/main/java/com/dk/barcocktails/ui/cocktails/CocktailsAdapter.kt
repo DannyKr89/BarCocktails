@@ -25,26 +25,15 @@ class CocktailsAdapter : ListAdapter<Cocktail, CocktailsAdapter.CoctailViewHolde
                     textview.text = "$name $value"
                     llIngredients.addView(textview)
                 }
+                println(cocktail.image)
+                ivImage.load(cocktail.image) {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_cocktail)
+                }
                 tvGarnier.text = cocktail.garnier
                 tvMethod.text = cocktail.method
-                ivImage.load(R.drawable.ic_cocktail)
             }
         }
-
-    }
-
-    companion object {
-        val comparator = object : DiffUtil.ItemCallback<Cocktail>() {
-            override fun areItemsTheSame(oldItem: Cocktail, newItem: Cocktail): Boolean {
-                return oldItem == newItem
-            }
-
-            override fun areContentsTheSame(oldItem: Cocktail, newItem: Cocktail): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-        }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CoctailViewHolder {
@@ -55,6 +44,20 @@ class CocktailsAdapter : ListAdapter<Cocktail, CocktailsAdapter.CoctailViewHolde
 
     override fun onBindViewHolder(holder: CoctailViewHolder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    companion object {
+        val comparator = object : DiffUtil.ItemCallback<Cocktail>() {
+            override fun areItemsTheSame(oldItem: Cocktail, newItem: Cocktail): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: Cocktail, newItem: Cocktail): Boolean {
+                return oldItem == newItem
+            }
+
+        }
+
     }
 }
 
