@@ -78,11 +78,11 @@ class NewCocktailFragment : Fragment() {
                     with(bindingItem) {
                         val ingredientName = etIngredientName.text.toString()
                         val ingredientValue = etIngredientValue.text.toString()
-                        if (name.isNullOrEmpty()) {
+                        if (name.isEmpty()) {
                             etName.error = "Required"
-                        } else if (ingredientName.isNullOrEmpty()) {
+                        } else if (ingredientName.isEmpty()) {
                             etIngredientName.error = "Required"
-                        } else if (ingredientValue.isNullOrEmpty()) {
+                        } else if (ingredientValue.isEmpty()) {
                             etIngredientValue.error = "Required"
                         } else {
                             ingredients[ingredientName] = ingredientValue.toInt()
