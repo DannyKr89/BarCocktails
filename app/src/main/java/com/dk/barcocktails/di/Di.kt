@@ -1,15 +1,19 @@
 package com.dk.barcocktails.di
 
 import com.dk.barcocktails.data.cocktails.CocktailsRepositoryImpl
+import com.dk.barcocktails.data.image.ImageRepositoryImpl
 import com.dk.barcocktails.data.login.FirebaseAuthRepositoryImpl
 import com.dk.barcocktails.domain.cocktails.AddCocktailUseCase
 import com.dk.barcocktails.domain.cocktails.CocktailsRepository
 import com.dk.barcocktails.domain.cocktails.GetCocktailsUseCase
+import com.dk.barcocktails.domain.image.ImageRepository
+import com.dk.barcocktails.domain.image.LoadImageUseCase
 import com.dk.barcocktails.domain.login.LoginRepository
 import com.dk.barcocktails.domain.login.SignInUseCase
 import com.dk.barcocktails.domain.login.SignOutUseCase
 import com.dk.barcocktails.domain.login.SignUpUseCase
 import com.dk.barcocktails.ui.cocktails.CocktailsViewModel
+import com.dk.barcocktails.ui.newcocktail.NewCocktailViewModel
 import com.dk.barcocktails.ui.signinsignup.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -33,11 +37,14 @@ val loginModule = module {
 }
 
 val cocktailsModule = module {
-    single<CocktailsRepository> { CocktailsRepositoryImpl(get(), get(), get()) }
+    single<CocktailsRepository> { CocktailsRepositoryImpl(get(), get()) }
     single<GetCocktailsUseCase> { GetCocktailsUseCase(get()) }
     viewModel<CocktailsViewModel> { CocktailsViewModel(get()) }
 }
 
 val newCocktailModule = module {
+    single<ImageRepository> { ImageRepositoryImpl(get(), get()) }
+    single<LoadImageUseCase> { LoadImageUseCase(get()) }
     single<AddCocktailUseCase> { AddCocktailUseCase(get()) }
+    viewModel { NewCocktailViewModel(get(), get()) }
 }

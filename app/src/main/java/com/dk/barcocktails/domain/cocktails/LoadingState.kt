@@ -1,8 +1,8 @@
 package com.dk.barcocktails.domain.cocktails
 
-sealed class LoadingState {
+sealed class LoadingState<out T> {
 
-    data class Success(val data: List<Cocktail>) : LoadingState()
-    data class Error(val error: Throwable) : LoadingState()
-    object Loading : LoadingState()
+    data class Success<T>(val data: T) : LoadingState<T>()
+    data class Error(val error: Throwable) : LoadingState<Nothing>()
+    data object Loading : LoadingState<Nothing>()
 }

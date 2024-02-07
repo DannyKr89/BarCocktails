@@ -1,6 +1,9 @@
 package com.dk.barcocktails.ui.newcocktail
 
 import android.database.Cursor
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -11,13 +14,15 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.forEach
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import coil.load
-import com.dk.barcocktails.AddCocktailService
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentNewCocktailBinding
 import com.dk.barcocktails.databinding.ItemIngredientBinding
+import com.dk.barcocktails.domain.cocktails.LoadingState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.set
 
 class NewCocktailFragment : Fragment() {
@@ -25,27 +30,14 @@ class NewCocktailFragment : Fragment() {
     private var _binding: FragmentNewCocktailBinding? = null
     private val binding: FragmentNewCocktailBinding get() = _binding!!
     private lateinit var uriImage: String
+    private val viewModel: NewCocktailViewModel by viewModel()
+
+    private var ingredientViewId = 0
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                binding.ivImageCocktail.load(uri)
-                var res: String? = null
-                val proj = arrayOf(MediaStore.Images.Media.DATA)
-                val cursor: Cursor? =
-                    requireActivity().getContentResolver().query(uri, proj, null, null, null)
-                if (cursor != null) {
-                    if (cursor.moveToFirst()) {
-                        val column_index: Int =
-                            cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                        res = cursor.getString(column_index)
-                    }
-                }
-                cursor?.close()
-                uriImage = res ?: ""
-                Log.d("PhotoPicker", "Selected URI: $res")
-            } else {
-                Log.d("PhotoPicker", "No media selected")
+                parseUri(uri)
             }
         }
 
@@ -60,19 +52,20 @@ class NewCocktailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
+        initViewModel()
 
     }
 
     private fun initViews() {
         with(binding) {
-            addView()
+            addIngredientView()
 
             ivImageCocktail.setOnClickListener {
                 pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
 
             fabAddIngredient.setOnClickListener {
-                addView()
+                addIngredientView()
             }
             btnAddCocktail.setOnClickListener {
                 val name = etName.text.toString()
@@ -96,20 +89,71 @@ class NewCocktailFragment : Fragment() {
                         }
                     }
                 }
-
-                requireActivity().startService(
-                    AddCocktailService.newIntent(
-                        requireContext(), name, uriImage, ingredients, method, garnier
-                    )
-                )
-                findNavController().popBackStack()
-
+                viewModel.addCocktail(name, uriImage, ingredients, method, garnier)
             }
         }
     }
 
-    private fun addView() {
-        var id = 0
+    private fun initViewModel() {
+        viewModel.loadImageLiveData.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is LoadingState.Error -> Toast.makeText(
+                    requireContext(),
+                    state.error.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                LoadingState.Loading -> {
+                    imageLoadingVisibility(0f, false)
+                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+                }
+
+                is LoadingState.Success -> {
+                    imageLoadingVisibility(1f, true)
+                    uriImage = state.data
+                    Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        viewModel.addCocktailLiveData.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is LoadingState.Error -> {}
+                LoadingState.Loading -> {}
+                is LoadingState.Success -> {
+                    findNavController().popBackStack()
+                }
+            }
+        }
+    }
+
+    private fun parseUri(uri: Uri) {
+        binding.ivImageCocktail.load(uri)
+        var res: String? = null
+        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor: Cursor? =
+            requireActivity().getContentResolver().query(uri, proj, null, null, null)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val column_index: Int =
+                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                res = cursor.getString(column_index)
+            }
+        }
+        cursor?.close()
+        viewModel.loadImage(res ?: "")
+        Log.d("PhotoPicker", "Selected URI: $res")
+    }
+
+    private fun imageLoadingVisibility(saturation: Float, boolean: Boolean) {
+        val matrix = ColorMatrix()
+        matrix.setSaturation(saturation)
+        val filter = ColorMatrixColorFilter(matrix)
+        binding.ivImageCocktail.colorFilter = filter
+        binding.btnAddCocktail.isEnabled = boolean
+        binding.progressImageLoading.isVisible = !boolean
+    }
+
+    private fun addIngredientView() {
         with(binding) {
             val ingredient = LayoutInflater.from(requireContext())
                 .inflate(R.layout.item_ingredient, llIngredients, false)
@@ -119,7 +163,7 @@ class NewCocktailFragment : Fragment() {
                 llIngredients.removeView(ingredient)
             }
 
-            ingredient.id = id++
+            ingredient.id = ingredientViewId++
             llIngredients.addView(ingredient)
         }
     }

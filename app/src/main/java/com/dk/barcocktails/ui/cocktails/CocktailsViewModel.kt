@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dk.barcocktails.domain.cocktails.Cocktail
 import com.dk.barcocktails.domain.cocktails.GetCocktailsUseCase
 import com.dk.barcocktails.domain.cocktails.LoadingState
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -12,14 +13,14 @@ import kotlinx.coroutines.launch
 
 class CocktailsViewModel(
     private val getCocktailsUseCase: GetCocktailsUseCase,
-    private val _liveData: MutableLiveData<LoadingState> = MutableLiveData()
+    private val _liveData: MutableLiveData<LoadingState<List<Cocktail>>> = MutableLiveData()
 ) : ViewModel() {
 
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         _liveData.postValue(LoadingState.Error(throwable))
     }
 
-    val liveData: LiveData<LoadingState> get() = _liveData
+    val liveData: LiveData<LoadingState<List<Cocktail>>> get() = _liveData
 
     fun getCocktails() {
         _liveData.postValue(LoadingState.Loading)

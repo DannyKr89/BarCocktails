@@ -1,20 +1,17 @@
 package com.dk.barcocktails.data.cocktails
 
-import android.net.Uri
 import com.dk.barcocktails.domain.cocktails.Cocktail
 import com.dk.barcocktails.domain.cocktails.CocktailsRepository
+import com.dk.barcocktails.domain.cocktails.LoadingState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
-import java.io.File
 
 
 class CocktailsRepositoryImpl(
     private val db: FirebaseFirestore,
-    auth: FirebaseAuth,
-    private val storage: FirebaseStorage
+    auth: FirebaseAuth
 ) :
     CocktailsRepository {
 
@@ -23,7 +20,7 @@ class CocktailsRepositoryImpl(
         val list = mutableListOf<Cocktail>()
         authUser?.let { user ->
             val result =
-                db.collection("Users").document(user.uid).collection("Cocktails").get().await()
+                db.collection(USERS).document(user.uid).collection(COCKTAILS).get().await()
             result.documents.forEach { snapshot ->
                 val cocktail = snapshot.toObject<Cocktail>()
                 cocktail?.let {
@@ -34,27 +31,28 @@ class CocktailsRepositoryImpl(
         return list
     }
 
-    override suspend fun addCocktail(cocktail: Cocktail) {
+    override suspend fun addCocktail(cocktail: Cocktail): LoadingState<String> {
         authUser?.let { user ->
-            val file = Uri.fromFile(File(cocktail.image.toString()))
-            val riversRef = storage.reference.child("${user.uid}/${file.lastPathSegment}")
-            val requst = riversRef.putFile(file).await()
-            val uriTask = riversRef.downloadUrl.await()
-
-            cocktail.image = uriTask.toString()
-            val result =
-                db.collection("Users").document(user.uid).collection("Cocktails").get().await()
-
-            cocktail.id = result.size()
-            db.collection("Users").document(user.uid).collection("Cocktails").add(
+            val idRequest =
+                db.collection(USERS).document(user.uid).collection(COCKTAILS).get().await()
+            cocktail.id = idRequest.size()
+            val addRequest = db.collection(USERS).document(user.uid).collection(COCKTAILS).add(
                 cocktail
             ).await()
+            return LoadingState.Success("Success")
         }
-
+        return LoadingState.Loading
     }
 
 
     override suspend fun deleteCocktails(cocktail: Cocktail) {
 
     }
+
+    companion object {
+        private const val USERS = "Users"
+        private const val COCKTAILS = "Cocktails"
+
+    }
+
 }
