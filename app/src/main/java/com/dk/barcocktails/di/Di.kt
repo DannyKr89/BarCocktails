@@ -12,6 +12,7 @@ import com.dk.barcocktails.domain.login.LoginRepository
 import com.dk.barcocktails.domain.login.SignInUseCase
 import com.dk.barcocktails.domain.login.SignOutUseCase
 import com.dk.barcocktails.domain.login.SignUpUseCase
+import com.dk.barcocktails.ui.cocktails.CocktailsAdapter
 import com.dk.barcocktails.ui.cocktails.CocktailsViewModel
 import com.dk.barcocktails.ui.newcocktail.NewCocktailViewModel
 import com.dk.barcocktails.ui.signinsignup.LoginViewModel
@@ -29,22 +30,23 @@ val appModule = module {
 }
 
 val loginModule = module {
-    single { SignInUseCase(get()) }
-    single { SignOutUseCase(get()) }
-    single { SignUpUseCase(get()) }
-    single<LoginRepository> { FirebaseAuthRepositoryImpl(get()) }
+    single { SignInUseCase(loginRepository = get()) }
+    single { SignOutUseCase(loginRepository = get()) }
+    single { SignUpUseCase(loginRepository = get()) }
+    single<LoginRepository> { FirebaseAuthRepositoryImpl(auth = get()) }
     viewModel<LoginViewModel> { LoginViewModel(signInUseCase = get(), signUpUseCase = get()) }
 }
 
 val cocktailsModule = module {
-    single<CocktailsRepository> { CocktailsRepositoryImpl(get(), get()) }
-    single<GetCocktailsUseCase> { GetCocktailsUseCase(get()) }
-    viewModel<CocktailsViewModel> { CocktailsViewModel(get()) }
+    single<CocktailsRepository> { CocktailsRepositoryImpl(db = get(), auth = get()) }
+    single<GetCocktailsUseCase> { GetCocktailsUseCase(cocktailsRepository = get()) }
+    single<CocktailsAdapter> { CocktailsAdapter() }
+    viewModel<CocktailsViewModel> { CocktailsViewModel(getCocktailsUseCase = get()) }
 }
 
 val newCocktailModule = module {
-    single<ImageRepository> { ImageRepositoryImpl(get(), get()) }
-    single<LoadImageUseCase> { LoadImageUseCase(get()) }
-    single<AddCocktailUseCase> { AddCocktailUseCase(get()) }
-    viewModel { NewCocktailViewModel(get(), get()) }
+    single<ImageRepository> { ImageRepositoryImpl(auth = get(), storage = get()) }
+    single<LoadImageUseCase> { LoadImageUseCase(imageRepository = get()) }
+    single<AddCocktailUseCase> { AddCocktailUseCase(cocktailsRepository = get()) }
+    viewModel { NewCocktailViewModel(loadImageUseCase = get(), addCocktailUseCase = get()) }
 }

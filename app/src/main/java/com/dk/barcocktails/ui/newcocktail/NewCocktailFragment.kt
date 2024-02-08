@@ -131,12 +131,12 @@ class NewCocktailFragment : Fragment() {
         var res: String? = null
         val proj = arrayOf(MediaStore.Images.Media.DATA)
         val cursor: Cursor? =
-            requireActivity().getContentResolver().query(uri, proj, null, null, null)
+            requireActivity().contentResolver.query(uri, proj, null, null, null)
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                val column_index: Int =
+                val columnIndex: Int =
                     cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                res = cursor.getString(column_index)
+                res = cursor.getString(columnIndex)
             }
         }
         cursor?.close()

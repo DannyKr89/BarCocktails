@@ -12,8 +12,10 @@ import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentCocktailsBinding
 import com.dk.barcocktails.domain.cocktails.LoadingState
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.MetadataChanges
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -26,7 +28,7 @@ class CocktailsFragment : Fragment() {
     private lateinit var listener: ListenerRegistration
 
     private val viewModel: CocktailsViewModel by viewModel()
-    private val adapter = CocktailsAdapter()
+    private val adapter: CocktailsAdapter = get()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +49,19 @@ class CocktailsFragment : Fragment() {
         }
 
         listener = db.collection("Users").document(user).collection("Cocktails")
-            .addSnapshotListener { _, _ ->
+            .addSnapshotListener(MetadataChanges.INCLUDE) { snapshots, _ ->
+                for (dc in snapshots!!.documentChanges) {
+                    when(dc.type) {
+                        DocumentChange.Type.ADDED -> {
+
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                        }
+                    }
+                }
                 viewModel.getCocktails()
             }
     }

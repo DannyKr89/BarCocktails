@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             android:autofillHints="Garnier"
             android:drawablePadding="12dp"
-            android:inputType="text"
+            android:inputType="textCapSentences"
             android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>

@@ -2,32 +2,63 @@ package com.dk.barcocktails.ui.cocktails
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.ImageLoader
+import coil.disk.DiskCache
 import coil.load
+import coil.memory.MemoryCache
+import coil.request.CachePolicy
+import coil.transform.RoundedCornersTransformation
+import coil.util.DebugLogger
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.ItemCocktailBinding
+import com.dk.barcocktails.databinding.ItemCocktailIngredientBinding
 import com.dk.barcocktails.domain.cocktails.Cocktail
 
-class CocktailsAdapter : ListAdapter<Cocktail, CocktailsAdapter.CoctailViewHolder>(comparator) {
+class CocktailsAdapter() :
+    ListAdapter<Cocktail, CocktailsAdapter.CoctailViewHolder>(comparator) {
 
     class CoctailViewHolder(private val binding: ItemCocktailBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        private val imgLoader: ImageLoader = ImageLoader.Builder(binding.root.context)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCache {
+                MemoryCache.Builder(binding.root.context)
+                    .maxSizePercent(0.25)
+                    .strongReferencesEnabled(true)
+                    .build()
+            }
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .diskCache {
+                DiskCache.Builder()
+                    .maxSizePercent(0.1)
+                    .directory(binding.root.context.cacheDir.resolve("image_cache"))
+                    .build()
+            }
+            .logger(DebugLogger())
+            .build()
 
         fun bind(cocktail: Cocktail) {
             with(binding) {
                 llIngredients.removeAllViews()
                 tvName.text = cocktail.name
                 cocktail.ingredients.forEach { name, value ->
-                    val textview = TextView(binding.root.context)
-                    textview.text = "$name $value"
-                    llIngredients.addView(textview)
+                    val view = LayoutInflater.from(root.context)
+                        .inflate(R.layout.item_cocktail_ingredient, llIngredients, false)
+                    val ingredientBinding = ItemCocktailIngredientBinding.bind(view)
+                    ingredientBinding.apply {
+                        tvCocktailIngredient.text = name
+                        tvCocktailValue.text = value.toString()
+                        llIngredients.addView(view)
+                    }
                 }
-                println(cocktail.image)
-                ivImage.load(cocktail.image) {
+
+                ivImage.load(cocktail.image, imgLoader) {
                     crossfade(true)
+                    transformations(RoundedCornersTransformation(20f))
                     placeholder(R.drawable.ic_cocktail)
                 }
                 tvGarnier.text = cocktail.garnier
