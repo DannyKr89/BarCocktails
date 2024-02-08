@@ -1,4 +1,4 @@
-package com.dk.barcocktails.data.image
+package com.dk.barcocktails.data.cocktails.image
 
 import android.net.Uri
 import com.dk.barcocktails.domain.cocktails.LoadingState

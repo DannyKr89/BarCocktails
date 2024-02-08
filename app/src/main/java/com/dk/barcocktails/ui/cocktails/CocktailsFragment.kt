@@ -12,7 +12,6 @@ import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentCocktailsBinding
 import com.dk.barcocktails.domain.cocktails.LoadingState
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
@@ -48,20 +47,8 @@ class CocktailsFragment : Fragment() {
             findNavController().navigate(R.id.action_cocktails_list_to_newCocktailFragment)
         }
 
-        listener = db.collection("Users").document(user).collection("Cocktails")
-            .addSnapshotListener(MetadataChanges.INCLUDE) { snapshots, _ ->
-                for (dc in snapshots!!.documentChanges) {
-                    when(dc.type) {
-                        DocumentChange.Type.ADDED -> {
-
-                        }
-                        DocumentChange.Type.MODIFIED -> {
-
-                        }
-                        DocumentChange.Type.REMOVED -> {
-                        }
-                    }
-                }
+        listener = db.collection(USERS).document(user).collection(COCKTAILS)
+            .addSnapshotListener(MetadataChanges.INCLUDE) { _, _ ->
                 viewModel.getCocktails()
             }
     }
@@ -81,7 +68,8 @@ class CocktailsFragment : Fragment() {
                     showProgressBar(false)
                     with(binding) {
                         rvCocktails.adapter = adapter
-                        adapter.submitList(state.data.sortedBy { it.id }.asReversed())
+                        adapter.submitList(state.data)
+                        rvCocktails.scrollToPosition(0)
                     }
                 }
             }
@@ -98,5 +86,10 @@ class CocktailsFragment : Fragment() {
     override fun onDestroyView() {
         listener.remove()
         super.onDestroyView()
+    }
+
+    companion object {
+        private const val USERS = "Users"
+        private const val COCKTAILS = "Cocktails"
     }
 }

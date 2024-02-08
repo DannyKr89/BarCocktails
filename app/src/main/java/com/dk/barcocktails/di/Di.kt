@@ -1,7 +1,13 @@
 package com.dk.barcocktails.di
 
+import android.content.Context
+import coil.ImageLoader
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import coil.request.CachePolicy
+import coil.util.DebugLogger
 import com.dk.barcocktails.data.cocktails.CocktailsRepositoryImpl
-import com.dk.barcocktails.data.image.ImageRepositoryImpl
+import com.dk.barcocktails.data.cocktails.image.ImageRepositoryImpl
 import com.dk.barcocktails.data.login.FirebaseAuthRepositoryImpl
 import com.dk.barcocktails.domain.cocktails.AddCocktailUseCase
 import com.dk.barcocktails.domain.cocktails.CocktailsRepository
@@ -38,9 +44,28 @@ val loginModule = module {
 }
 
 val cocktailsModule = module {
+    single<ImageLoader> {
+        ImageLoader(get()).newBuilder()
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCache {
+                MemoryCache.Builder(get())
+                    .maxSizePercent(0.25)
+                    .strongReferencesEnabled(true)
+                    .build()
+            }
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .diskCache {
+                DiskCache.Builder()
+                    .maxSizePercent(0.4)
+                    .directory(get<Context>().cacheDir)
+                    .build()
+            }
+            .logger(DebugLogger())
+            .build()
+    }
     single<CocktailsRepository> { CocktailsRepositoryImpl(db = get(), auth = get()) }
     single<GetCocktailsUseCase> { GetCocktailsUseCase(cocktailsRepository = get()) }
-    single<CocktailsAdapter> { CocktailsAdapter() }
+    single<CocktailsAdapter> { CocktailsAdapter(imgLoader = get()) }
     viewModel<CocktailsViewModel> { CocktailsViewModel(getCocktailsUseCase = get()) }
 }
 
