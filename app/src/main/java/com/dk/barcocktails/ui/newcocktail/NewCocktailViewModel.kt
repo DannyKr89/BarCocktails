@@ -23,7 +23,9 @@ class NewCocktailViewModel(
     fun loadImage(uri: String) {
         _loadImageLiveData.postValue(LoadingState.Loading)
         viewModelScope.launch(Dispatchers.IO) {
-            _loadImageLiveData.postValue(loadImageUseCase.invoke(uri))
+            loadImageUseCase.invoke(uri).collect() {
+                _loadImageLiveData.postValue(it)
+            }
         }
     }
 
@@ -40,7 +42,9 @@ class NewCocktailViewModel(
         )
         _addCocktailLiveData.postValue(LoadingState.Loading)
         viewModelScope.launch(Dispatchers.IO) {
-            _addCocktailLiveData.postValue(addCocktailUseCase.invoke(cocktail))
+            addCocktailUseCase.invoke(cocktail).collect {
+                _addCocktailLiveData.postValue(it)
+            }
         }
     }
 

@@ -29,7 +29,7 @@ class NewCocktailFragment : Fragment() {
 
     private var _binding: FragmentNewCocktailBinding? = null
     private val binding: FragmentNewCocktailBinding get() = _binding!!
-    private lateinit var uriImage: String
+    private var uriImage: String = ""
     private val viewModel: NewCocktailViewModel by viewModel()
 
     private var ingredientViewId = 0

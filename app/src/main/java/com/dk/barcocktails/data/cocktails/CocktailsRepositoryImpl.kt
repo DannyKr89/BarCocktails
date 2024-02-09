@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 
@@ -15,37 +16,45 @@ class CocktailsRepositoryImpl(
 ) : CocktailsRepository {
 
     private val authUser = auth.currentUser
-    override suspend fun getCocktails(): List<Cocktail> {
+    override suspend fun getCocktails() = flow<LoadingState<List<Cocktail>>> {
         val list = mutableListOf<Cocktail>()
         authUser?.let { user ->
-            val result = db.collection(USERS).document(user.uid).collection(COCKTAILS)
-                .orderBy(ID, Query.Direction.DESCENDING).get().await()
-            result.documents.forEach { snapshot ->
-                val cocktail = snapshot.toObject<Cocktail>()
-                cocktail?.let {
-                    list.add(it)
+            try {
+                val result = db.collection(USERS).document(user.uid).collection(COCKTAILS)
+                    .orderBy(ID, Query.Direction.DESCENDING).get().await()
+                result.documents.forEach { snapshot ->
+                    val cocktail = snapshot.toObject<Cocktail>()
+                    cocktail?.let {
+                        list.add(it)
+                    }
                 }
+                emit(LoadingState.Success(list))
+            } catch (e: Exception) {
+                emit(LoadingState.Error(e))
             }
+
         }
-        return list
     }
 
-    override suspend fun addCocktail(cocktail: Cocktail): LoadingState<String> {
+    override suspend fun addCocktail(cocktail: Cocktail) = flow {
         authUser?.let { user ->
-            var id = 0
-            val idRequest =
-                db.collection(USERS).document(user.uid).collection(COCKTAILS).get().await()
-            idRequest.forEach {
-                if (it.id.toInt() > id) {
-                    id = it.id.toInt()
+            try {
+                val idRequest =
+                    db.collection(USERS).document(user.uid).collection(COCKTAILS).get().await()
+                idRequest.forEach {
+                    if (it.id.toInt() >= cocktail.id) {
+                        cocktail.id = it.id.toInt() + 1
+                    }
                 }
+                val addRequest =
+                    db.collection(USERS).document(user.uid).collection(COCKTAILS)
+                        .document(cocktail.id.toString()).set(cocktail).await()
+                emit(LoadingState.Success("Success"))
+            } catch (e: Exception) {
+                emit(LoadingState.Error(e))
             }
-            cocktail.id = id
-            val addRequest =
-                db.collection(USERS).document(user.uid).collection(COCKTAILS).add(cocktail).await()
-            return LoadingState.Success("Success")
+
         }
-        return LoadingState.Loading
     }
 
 

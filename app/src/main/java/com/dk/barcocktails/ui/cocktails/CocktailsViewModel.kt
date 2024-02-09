@@ -25,7 +25,9 @@ class CocktailsViewModel(
     fun getCocktails() {
         _liveData.postValue(LoadingState.Loading)
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            _liveData.postValue(LoadingState.Success(getCocktailsUseCase.invoke()))
+            getCocktailsUseCase.invoke().collect {
+                _liveData.postValue(it)
+            }
         }
     }
 }

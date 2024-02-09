@@ -1,10 +1,12 @@
 package com.dk.barcocktails.domain.cocktails
 
+import kotlinx.coroutines.flow.Flow
+
 interface CocktailsRepository {
 
-    suspend fun getCocktails(): List<Cocktail>
+    suspend fun getCocktails(): Flow<LoadingState<List<Cocktail>>>
 
-    suspend fun addCocktail(cocktail: Cocktail): LoadingState<String>
+    suspend fun addCocktail(cocktail: Cocktail): Flow<LoadingState<String>>
 
     suspend fun deleteCocktails(cocktail: Cocktail)
 }

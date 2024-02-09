@@ -1,7 +1,12 @@
 package com.dk.barcocktails.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -15,25 +20,51 @@ import org.koin.android.ext.android.get
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
-    private val firebaseAuth = get<FirebaseAuth>()
-
     private lateinit var navController: NavController
+    private lateinit var requestPermission: ActivityResultLauncher<String>
+    private val firebaseAuth = get<FirebaseAuth>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-        binding.toolbar.isTitleCentered = true
+        requestStoragePermissions()
+        checkStoragePermission()
+        setUpToolbar()
+        setUpNavigation()
+        checkCurentUser(savedInstanceState)
 
+    }
+
+    private fun checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+
+        } else {
+            requestPermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+    }
+
+    private fun requestStoragePermissions() {
+        requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        }
+    }
+
+    private fun checkCurentUser(savedInstanceState: Bundle?) {
+        if (firebaseAuth.currentUser != null && savedInstanceState == null) {
+            navController.navigate(R.id.action_loginFragment_to_cocktailsFragment)
+        }
+    }
+
+    private fun setUpNavigation() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
         navController = navHostFragment.findNavController()
 
         binding.navView.setupWithNavController(navController)
-
-
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             with(binding) {
@@ -42,9 +73,10 @@ class MainActivity : AppCompatActivity() {
             }
             supportActionBar?.title = destination.label
         }
+    }
 
-        if (firebaseAuth.currentUser != null && savedInstanceState == null) {
-            navController.navigate(R.id.action_loginFragment_to_cocktailsFragment)
-        }
+    private fun setUpToolbar() {
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.isTitleCentered = true
     }
 }
