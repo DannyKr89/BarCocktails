@@ -5,8 +5,8 @@ import com.dk.barcocktails.domain.cocktails.LoadingState
 import com.dk.barcocktails.domain.image.ImageRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import java.io.File
 
 class ImageRepositoryImpl(
@@ -14,20 +14,24 @@ class ImageRepositoryImpl(
 ) : ImageRepository {
 
     private val authUser = auth.currentUser
-    override suspend fun loadImage(uri: String) = flow<LoadingState<String>> {
+    override suspend fun loadImage(uri: String) = callbackFlow {
         authUser?.let { user ->
             try {
                 val file = Uri.fromFile(File(uri))
                 val storageRef = storage.reference.child("${user.uid}/${file.lastPathSegment}")
-                val request = storageRef.putFile(file).await()
-                if (request.task.isSuccessful) {
-                    val uriTask = storageRef.downloadUrl.await()
-                    emit(LoadingState.Success(uriTask.toString()))
+                storageRef.putFile(file).addOnProgressListener {
+                    trySend(LoadingState.Loading((100 * it.bytesTransferred) / it.totalByteCount))
+                }.addOnCompleteListener {
+                    storageRef.downloadUrl.addOnCompleteListener {
+                        trySend(LoadingState.Success(it.result.toString()))
+                    }
+                }.addOnFailureListener {
+                    trySend(LoadingState.Error(it.fillInStackTrace()))
                 }
             } catch (e: Exception) {
-                emit(LoadingState.Error(e))
+                trySend(LoadingState.Error(e))
             }
-
         }
+        awaitClose()
     }
 }

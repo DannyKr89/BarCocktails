@@ -103,26 +103,36 @@ class NewCocktailFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                LoadingState.Loading -> {
-                    imageLoadingVisibility(0f, false)
-                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+                is LoadingState.Loading -> {
+                    imageLoadingVisibility(0f, false, state.progress)
                 }
 
                 is LoadingState.Success -> {
-                    imageLoadingVisibility(1f, true)
+                    imageLoadingVisibility(1f, true, null)
                     uriImage = state.data
-                    Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
                 }
             }
         }
         viewModel.addCocktailLiveData.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is LoadingState.Error -> {}
-                LoadingState.Loading -> {}
+                is LoadingState.Error -> {
+                    Toast.makeText(requireContext(), state.error.message, Toast.LENGTH_SHORT).show()
+                }
+
+                is LoadingState.Loading -> {
+                    showProgressBar(true)
+                }
+
                 is LoadingState.Success -> {
                     findNavController().popBackStack()
                 }
             }
+        }
+    }
+
+    private fun showProgressBar(isLoading: Boolean) {
+        with(binding) {
+            progressbar.isVisible = isLoading
         }
     }
 
@@ -144,13 +154,19 @@ class NewCocktailFragment : Fragment() {
         Log.d("PhotoPicker", "Selected URI: $res")
     }
 
-    private fun imageLoadingVisibility(saturation: Float, boolean: Boolean) {
+    private fun imageLoadingVisibility(saturation: Float, boolean: Boolean, progress: Long?) {
         val matrix = ColorMatrix()
         matrix.setSaturation(saturation)
         val filter = ColorMatrixColorFilter(matrix)
-        binding.ivImageCocktail.colorFilter = filter
-        binding.btnAddCocktail.isEnabled = boolean
-        binding.progressImageLoading.isVisible = !boolean
+        with(binding) {
+            ivImageCocktail.colorFilter = filter
+            btnAddCocktail.isEnabled = boolean
+            progressImageLoading.isVisible = !boolean
+            if (progress != null) {
+                progressImageLoading.progress = progress.toInt()
+            }
+        }
+
     }
 
     private fun addIngredientView() {

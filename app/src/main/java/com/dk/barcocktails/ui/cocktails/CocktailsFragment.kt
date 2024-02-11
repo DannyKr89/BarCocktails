@@ -39,14 +39,20 @@ class CocktailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val user = firebaseAuth.currentUser?.uid.toString()
 
         initViewModel()
+        initViews()
+        checkForUpdate()
+    }
 
+    private fun initViews() {
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_cocktails_list_to_newCocktailFragment)
         }
+    }
 
+    private fun checkForUpdate() {
+        val user = firebaseAuth.currentUser?.uid.toString()
         listener = db.collection(USERS).document(user).collection(COCKTAILS)
             .addSnapshotListener(MetadataChanges.INCLUDE) { _, _ ->
                 viewModel.getCocktails()
@@ -60,7 +66,7 @@ class CocktailsFragment : Fragment() {
                     Toast.makeText(requireContext(), state.error.message, Toast.LENGTH_SHORT).show()
                 }
 
-                LoadingState.Loading -> {
+                is LoadingState.Loading -> {
                     showProgressBar(true)
                 }
 
@@ -69,6 +75,9 @@ class CocktailsFragment : Fragment() {
                     with(binding) {
                         rvCocktails.adapter = adapter
                         adapter.submitList(state.data)
+                        adapter.listener = {
+                            viewModel.deleteCocktail(it)
+                        }
                         rvCocktails.scrollToPosition(0)
                     }
                 }
@@ -80,11 +89,12 @@ class CocktailsFragment : Fragment() {
         with(binding) {
             progressbar.isVisible = isLoading
         }
-
     }
 
     override fun onDestroyView() {
+        binding.rvCocktails.adapter = null
         listener.remove()
+        _binding = null
         super.onDestroyView()
     }
 

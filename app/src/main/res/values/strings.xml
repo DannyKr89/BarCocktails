@@ -15,4 +15,6 @@
     <string name="add_cocktail">Add cocktail</string>
     <string name="value">Value</string>
     <string name="name_ingredient">Name Ingredient</string>
+    <string name="sign_out">Sign out</string>
+    <string name="delete">Delete</string>
 </resources>

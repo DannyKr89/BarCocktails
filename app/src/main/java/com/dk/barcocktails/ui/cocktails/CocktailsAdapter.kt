@@ -1,7 +1,10 @@
 package com.dk.barcocktails.ui.cocktails
 
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +19,17 @@ import com.dk.barcocktails.domain.cocktails.Cocktail
 class CocktailsAdapter(private val imgLoader: ImageLoader) :
     ListAdapter<Cocktail, CocktailsAdapter.CocKtailViewHolder>(comparator) {
 
+    var listener: ((Cocktail) -> Unit)? = null
+
     inner class CocKtailViewHolder(private val binding: ItemCocktailBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(cocktail: Cocktail) {
             with(binding) {
+                root.setOnLongClickListener {
+                    showPopupMenu(it, cocktail)
+                    true
+                }
                 llIngredients.removeAllViews()
                 tvName.text = cocktail.name
                 cocktail.ingredients.forEach { (name, value) ->
@@ -39,8 +48,9 @@ class CocktailsAdapter(private val imgLoader: ImageLoader) :
                         transformations(RoundedCornersTransformation(20f))
                         placeholder(R.drawable.ic_cocktail)
                     }
+                } else {
+                    ivImage.load(R.drawable.ic_cocktail)
                 }
-
                 tvGarnier.text = cocktail.garnier
                 tvMethod.text = cocktail.method
             }
@@ -57,6 +67,24 @@ class CocktailsAdapter(private val imgLoader: ImageLoader) :
         holder.bind(getItem(position))
     }
 
+    private fun showPopupMenu(view: View, cocktail: Cocktail) {
+        val popupMenu = PopupMenu(view.context, view, Gravity.END)
+        popupMenu.inflate(R.menu.context_menu)
+        popupMenu.setOnMenuItemClickListener {
+            return@setOnMenuItemClickListener when (it.itemId) {
+                R.id.delete_item -> {
+                    listener?.invoke(cocktail)
+                    true
+                }
+
+                else -> {
+                    false
+                }
+            }
+        }
+        popupMenu.show()
+    }
+
     companion object {
         val comparator = object : DiffUtil.ItemCallback<Cocktail>() {
             override fun areItemsTheSame(oldItem: Cocktail, newItem: Cocktail): Boolean {
@@ -66,9 +94,7 @@ class CocktailsAdapter(private val imgLoader: ImageLoader) :
             override fun areContentsTheSame(oldItem: Cocktail, newItem: Cocktail): Boolean {
                 return oldItem == newItem
             }
-
         }
-
     }
 }
 

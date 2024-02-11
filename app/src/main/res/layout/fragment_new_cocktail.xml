@@ -15,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <ImageView
                 android:id="@+id/iv_image_cocktail"
                 android:layout_width="0dp"
@@ -27,15 +26,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ProgressBar
+            <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progress_image_loading"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:max="100"
+                android:orientation="horizontal"
+                android:progress="0"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/iv_image_cocktail"
                 app:layout_constraintEnd_toEndOf="@id/iv_image_cocktail"
                 app:layout_constraintStart_toStartOf="@id/iv_image_cocktail"
-                app:layout_constraintTop_toTopOf="@id/iv_image_cocktail" />
+                app:layout_constraintTop_toBottomOf="@id/iv_image_cocktail" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_name"
@@ -141,6 +143,15 @@
                 app:layout_constraintTop_toBottomOf="@id/til_garnier"
                 app:layout_constraintVertical_chainStyle="packed" />
 
+            <ProgressBar
+                android:id="@+id/progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>

@@ -17,6 +17,7 @@ class CocktailsRepositoryImpl(
 
     private val authUser = auth.currentUser
     override suspend fun getCocktails() = flow<LoadingState<List<Cocktail>>> {
+        emit(LoadingState.Loading())
         val list = mutableListOf<Cocktail>()
         authUser?.let { user ->
             try {
@@ -37,6 +38,7 @@ class CocktailsRepositoryImpl(
     }
 
     override suspend fun addCocktail(cocktail: Cocktail) = flow {
+        emit(LoadingState.Loading())
         authUser?.let { user ->
             try {
                 val idRequest =
@@ -59,7 +61,15 @@ class CocktailsRepositoryImpl(
 
 
     override suspend fun deleteCocktails(cocktail: Cocktail) {
-
+        authUser?.let { user ->
+            try {
+                val idRequest =
+                    db.collection(USERS).document(user.uid).collection(COCKTAILS)
+                        .document(cocktail.id.toString()).delete()
+            } catch (e: Exception) {
+                throw e
+            }
+        }
     }
 
     companion object {

@@ -21,7 +21,6 @@ class NewCocktailViewModel(
     val loadImageLiveData: LiveData<LoadingState<String>> get() = _loadImageLiveData
     val addCocktailLiveData: LiveData<LoadingState<String>> get() = _addCocktailLiveData
     fun loadImage(uri: String) {
-        _loadImageLiveData.postValue(LoadingState.Loading)
         viewModelScope.launch(Dispatchers.IO) {
             loadImageUseCase.invoke(uri).collect() {
                 _loadImageLiveData.postValue(it)
@@ -40,7 +39,6 @@ class NewCocktailViewModel(
             0,
             name, image, ingredients, method, garnier
         )
-        _addCocktailLiveData.postValue(LoadingState.Loading)
         viewModelScope.launch(Dispatchers.IO) {
             addCocktailUseCase.invoke(cocktail).collect {
                 _addCocktailLiveData.postValue(it)

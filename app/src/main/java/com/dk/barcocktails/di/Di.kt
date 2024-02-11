@@ -11,6 +11,7 @@ import com.dk.barcocktails.data.cocktails.image.ImageRepositoryImpl
 import com.dk.barcocktails.data.login.FirebaseAuthRepositoryImpl
 import com.dk.barcocktails.domain.cocktails.AddCocktailUseCase
 import com.dk.barcocktails.domain.cocktails.CocktailsRepository
+import com.dk.barcocktails.domain.cocktails.DeleteCocktailUseCase
 import com.dk.barcocktails.domain.cocktails.GetCocktailsUseCase
 import com.dk.barcocktails.domain.image.ImageRepository
 import com.dk.barcocktails.domain.image.LoadImageUseCase
@@ -65,8 +66,14 @@ val cocktailsModule = module {
     }
     single<CocktailsRepository> { CocktailsRepositoryImpl(db = get(), auth = get()) }
     single<GetCocktailsUseCase> { GetCocktailsUseCase(cocktailsRepository = get()) }
+    single<DeleteCocktailUseCase> { DeleteCocktailUseCase(cocktailsRepository = get()) }
     single<CocktailsAdapter> { CocktailsAdapter(imgLoader = get()) }
-    viewModel<CocktailsViewModel> { CocktailsViewModel(getCocktailsUseCase = get()) }
+    viewModel<CocktailsViewModel> {
+        CocktailsViewModel(
+            getCocktailsUseCase = get(),
+            deleteCocktailUseCase = get()
+        )
+    }
 }
 
 val newCocktailModule = module {
