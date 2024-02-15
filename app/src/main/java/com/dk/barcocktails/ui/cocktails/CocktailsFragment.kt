@@ -10,12 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentCocktailsBinding
+import com.dk.barcocktails.domain.cocktails.Cocktail
 import com.dk.barcocktails.domain.cocktails.LoadingState
+import com.dk.barcocktails.ui.main.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
 import org.koin.android.ext.android.get
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CocktailsFragment : Fragment() {
@@ -27,7 +30,9 @@ class CocktailsFragment : Fragment() {
     private lateinit var listener: ListenerRegistration
 
     private val viewModel: CocktailsViewModel by viewModel()
+    private val mainViewModel: MainViewModel by activityViewModel()
     private val adapter: CocktailsAdapter = get()
+    private var isAdmin = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +51,7 @@ class CocktailsFragment : Fragment() {
     }
 
     private fun initViews() {
-        binding.fab.setOnClickListener {
+        binding.fabAddCocktail.setOnClickListener {
             findNavController().navigate(R.id.action_cocktails_list_to_newCocktailFragment)
         }
     }
@@ -60,6 +65,38 @@ class CocktailsFragment : Fragment() {
     }
 
     private fun initViewModel() {
+        mainViewModel.checkOrganization()
+        mainViewModel.liveDataCheckOrganization.observe(viewLifecycleOwner) { isOrganization ->
+            when (isOrganization) {
+                true -> {
+                    mainViewModel.liveDataCheckPassword.observe(viewLifecycleOwner) { admin ->
+                        when (admin) {
+                            true -> {
+                                isAdmin = true
+                                with(binding) {
+                                    fabAddCocktail.isVisible = true
+                                }
+                            }
+
+                            false -> {
+                                isAdmin = false
+                                with(binding) {
+                                    fabAddCocktail.isVisible = false
+                                }
+                            }
+                        }
+                    }
+                }
+
+                false -> {
+                    with(binding) {
+                        isAdmin = true
+                        fabAddCocktail.isVisible = !isOrganization
+                    }
+                }
+            }
+        }
+
         viewModel.liveData.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is LoadingState.Error -> {
@@ -72,16 +109,32 @@ class CocktailsFragment : Fragment() {
 
                 is LoadingState.Success -> {
                     showProgressBar(false)
-                    with(binding) {
-                        rvCocktails.adapter = adapter
-                        adapter.submitList(state.data)
-                        adapter.listener = {
-                            viewModel.deleteCocktail(it)
-                        }
-                        rvCocktails.scrollToPosition(0)
-                    }
+                    showData(state.data)
                 }
             }
+        }
+    }
+
+    private fun showData(data: List<Cocktail>) {
+        with(binding) {
+            rvCocktails.adapter = adapter
+            adapter.submitList(data)
+            adapter.listener = {
+                if (isAdmin) {
+                    viewModel.deleteCocktail(it)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        resources.getString(R.string.hint_enter_password),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            rvCocktails.postDelayed(
+                {
+                    rvCocktails.scrollToPosition(0)
+                }, 10
+            )
         }
     }
 

@@ -12,12 +12,12 @@ import kotlinx.coroutines.tasks.await
 
 
 class CocktailsRepositoryImpl(
-    private val db: FirebaseFirestore, auth: FirebaseAuth
+    private val db: FirebaseFirestore, private val auth: FirebaseAuth
 ) : CocktailsRepository {
 
-    private val authUser = auth.currentUser
     override suspend fun getCocktails() = flow<LoadingState<List<Cocktail>>> {
         emit(LoadingState.Loading())
+        val authUser = auth.currentUser
         val list = mutableListOf<Cocktail>()
         authUser?.let { user ->
             try {
@@ -39,6 +39,7 @@ class CocktailsRepositoryImpl(
 
     override suspend fun addCocktail(cocktail: Cocktail) = flow {
         emit(LoadingState.Loading())
+        val authUser = auth.currentUser
         authUser?.let { user ->
             try {
                 val idRequest =
@@ -61,6 +62,7 @@ class CocktailsRepositoryImpl(
 
 
     override suspend fun deleteCocktails(cocktail: Cocktail) {
+        val authUser = auth.currentUser
         authUser?.let { user ->
             try {
                 val idRequest =

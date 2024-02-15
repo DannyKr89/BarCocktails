@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/app_background"
     android:fitsSystemWindows="true"
-    tools:context="com.dk.barcocktails.ui.MainActivity">
+    tools:context="com.dk.barcocktails.ui.main.MainActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"

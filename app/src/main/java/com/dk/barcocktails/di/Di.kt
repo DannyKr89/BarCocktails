@@ -7,8 +7,9 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.util.DebugLogger
 import com.dk.barcocktails.data.cocktails.CocktailsRepositoryImpl
-import com.dk.barcocktails.data.cocktails.image.ImageRepositoryImpl
+import com.dk.barcocktails.data.image.ImageRepositoryImpl
 import com.dk.barcocktails.data.login.FirebaseAuthRepositoryImpl
+import com.dk.barcocktails.data.profile.ProfileRepositoryImpl
 import com.dk.barcocktails.domain.cocktails.AddCocktailUseCase
 import com.dk.barcocktails.domain.cocktails.CocktailsRepository
 import com.dk.barcocktails.domain.cocktails.DeleteCocktailUseCase
@@ -19,10 +20,17 @@ import com.dk.barcocktails.domain.login.LoginRepository
 import com.dk.barcocktails.domain.login.SignInUseCase
 import com.dk.barcocktails.domain.login.SignOutUseCase
 import com.dk.barcocktails.domain.login.SignUpUseCase
+import com.dk.barcocktails.domain.profile.CheckOrganizationUseCase
+import com.dk.barcocktails.domain.profile.CheckPasswordUseCase
+import com.dk.barcocktails.domain.profile.LoadProfileUseCase
+import com.dk.barcocktails.domain.profile.ProfileRepository
 import com.dk.barcocktails.ui.cocktails.CocktailsAdapter
 import com.dk.barcocktails.ui.cocktails.CocktailsViewModel
+import com.dk.barcocktails.ui.main.MainViewModel
 import com.dk.barcocktails.ui.newcocktail.NewCocktailViewModel
-import com.dk.barcocktails.ui.signinsignup.LoginViewModel
+import com.dk.barcocktails.ui.profile.ProfileViewModel
+import com.dk.barcocktails.ui.signin.LoginViewModel
+import com.dk.barcocktails.ui.signup.SignUpViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -34,35 +42,34 @@ val appModule = module {
     single { FirebaseAuth.getInstance() }
     single { Firebase.firestore }
     single { Firebase.storage }
+    single<CheckOrganizationUseCase> { CheckOrganizationUseCase(get()) }
+    single<CheckPasswordUseCase> { CheckPasswordUseCase(get()) }
+    viewModel<MainViewModel> {
+        MainViewModel(
+            checkOrganizationUseCase = get(), checkPasswordUseCase = get()
+        )
+    }
 }
 
 val loginModule = module {
     single { SignInUseCase(loginRepository = get()) }
-    single { SignOutUseCase(loginRepository = get()) }
+    single<LoginRepository> { FirebaseAuthRepositoryImpl(auth = get(), db = get()) }
+    viewModel<LoginViewModel> { LoginViewModel(signInUseCase = get()) }
+}
+
+val signUpModule = module {
     single { SignUpUseCase(loginRepository = get()) }
-    single<LoginRepository> { FirebaseAuthRepositoryImpl(auth = get()) }
-    viewModel<LoginViewModel> { LoginViewModel(signInUseCase = get(), signUpUseCase = get()) }
+    viewModel<SignUpViewModel> { SignUpViewModel(signUpUseCase = get()) }
 }
 
 val cocktailsModule = module {
     single<ImageLoader> {
-        ImageLoader(get()).newBuilder()
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCache {
-                MemoryCache.Builder(get())
-                    .maxSizePercent(0.25)
-                    .strongReferencesEnabled(true)
-                    .build()
-            }
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCache {
-                DiskCache.Builder()
-                    .maxSizePercent(0.4)
-                    .directory(get<Context>().cacheDir)
-                    .build()
-            }
-            .logger(DebugLogger())
-            .build()
+        ImageLoader(get()).newBuilder().memoryCachePolicy(CachePolicy.ENABLED).memoryCache {
+            MemoryCache.Builder(get()).maxSizePercent(0.25).strongReferencesEnabled(true)
+                .build()
+        }.diskCachePolicy(CachePolicy.ENABLED).diskCache {
+            DiskCache.Builder().maxSizePercent(0.4).directory(get<Context>().cacheDir).build()
+        }.logger(DebugLogger()).build()
     }
     single<CocktailsRepository> { CocktailsRepositoryImpl(db = get(), auth = get()) }
     single<GetCocktailsUseCase> { GetCocktailsUseCase(cocktailsRepository = get()) }
@@ -70,8 +77,7 @@ val cocktailsModule = module {
     single<CocktailsAdapter> { CocktailsAdapter(imgLoader = get()) }
     viewModel<CocktailsViewModel> {
         CocktailsViewModel(
-            getCocktailsUseCase = get(),
-            deleteCocktailUseCase = get()
+            getCocktailsUseCase = get(), deleteCocktailUseCase = get()
         )
     }
 }
@@ -79,6 +85,17 @@ val cocktailsModule = module {
 val newCocktailModule = module {
     single<ImageRepository> { ImageRepositoryImpl(auth = get(), storage = get()) }
     single<LoadImageUseCase> { LoadImageUseCase(imageRepository = get()) }
+    single { SignOutUseCase(loginRepository = get()) }
     single<AddCocktailUseCase> { AddCocktailUseCase(cocktailsRepository = get()) }
     viewModel { NewCocktailViewModel(loadImageUseCase = get(), addCocktailUseCase = get()) }
+}
+
+val profileModule = module {
+    single<ProfileRepository> { ProfileRepositoryImpl(db = get(), auth = get()) }
+    single<LoadProfileUseCase> { LoadProfileUseCase(get()) }
+    viewModel {
+        ProfileViewModel(
+            signOutUseCase = get(), loadProfileUseCase = get()
+        )
+    }
 }

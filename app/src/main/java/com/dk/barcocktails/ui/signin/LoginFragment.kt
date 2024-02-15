@@ -1,4 +1,4 @@
-package com.dk.barcocktails.ui.signinsignup
+package com.dk.barcocktails.ui.signin
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -41,28 +41,11 @@ class LoginFragment : Fragment() {
                         .show()
                 }
 
-                SignInSignUpState.Init -> {
-                    Toast.makeText(requireContext(), "Init", Toast.LENGTH_SHORT).show()
-                }
-
                 is SignInSignUpState.Success -> {
                     findNavController().navigate(R.id.action_loginFragment_to_cocktailsFragment)
                 }
             }
         }
-        viewModel.signUpState.observe(viewLifecycleOwner) {
-            when (it) {
-                is SignInSignUpState.Error -> {
-                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
-                }
-
-                SignInSignUpState.Init -> {}
-                is SignInSignUpState.Success -> {
-                    Toast.makeText(requireContext(), "User Created", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
     }
 
     private fun initViews() {
@@ -80,16 +63,7 @@ class LoginFragment : Fragment() {
                 }
             }
             tvSignUp.setOnClickListener {
-                val email = etEmail.text.toString()
-                val password = etPassword.text.toString()
-
-                if (etEmail.text.isNullOrEmpty()) {
-                    etEmail.error = resources.getString(R.string.require_field)
-                } else if (etPassword.text.isNullOrEmpty()) {
-                    etPassword.error = resources.getString(R.string.require_field)
-                } else {
-                    viewModel.signUpRequest(email, password)
-                }
+                findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
             }
 
         }

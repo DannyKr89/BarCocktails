@@ -1,4 +1,4 @@
-package com.dk.barcocktails.data.cocktails.image
+package com.dk.barcocktails.data.image
 
 import android.net.Uri
 import com.dk.barcocktails.domain.cocktails.LoadingState
@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.callbackFlow
 import java.io.File
 
 class ImageRepositoryImpl(
-    auth: FirebaseAuth, private val storage: FirebaseStorage
+    private val auth: FirebaseAuth, private val storage: FirebaseStorage
 ) : ImageRepository {
 
-    private val authUser = auth.currentUser
     override suspend fun loadImage(uri: String) = callbackFlow {
+        val authUser = auth.currentUser
         authUser?.let { user ->
             try {
                 val file = Uri.fromFile(File(uri))

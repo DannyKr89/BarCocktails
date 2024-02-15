@@ -1,43 +1,24 @@
-package com.dk.barcocktails.ui.signinsignup
+package com.dk.barcocktails.ui.signup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dk.barcocktails.domain.login.SignInSignUpState
-import com.dk.barcocktails.domain.login.SignInUseCase
 import com.dk.barcocktails.domain.login.SignUpUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LoginViewModel(
-    private val _signInState: MutableLiveData<SignInSignUpState> = MutableLiveData(),
+class SignUpViewModel(
     private val _signUpState: MutableLiveData<SignInSignUpState> = MutableLiveData(),
-    private val signInUseCase: SignInUseCase,
     private val signUpUseCase: SignUpUseCase
-
 ) : ViewModel() {
 
-    val signInState: LiveData<SignInSignUpState> get() = _signInState
     val signUpState: LiveData<SignInSignUpState> get() = _signUpState
 
-
-    fun signInRequest(email: String, password: String) {
+    fun signUpRequest(email: String, password: String, name: String, adminPassword: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            signInUseCase.signIn(email, password).collect {
-                if (it) {
-                    _signInState.postValue(SignInSignUpState.Success("Success"))
-                } else {
-                    _signInState.postValue(SignInSignUpState.Error(Throwable("Error")))
-                }
-            }
-
-        }
-    }
-
-    fun signUpRequest(email: String, password: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            signUpUseCase.signUp(email, password).collect {
+            signUpUseCase.invoke(email, password, name, adminPassword).collect {
                 if (it) {
                     _signUpState.postValue(SignInSignUpState.Success("Success"))
                 } else {

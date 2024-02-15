@@ -1,4 +1,4 @@
-package com.dk.barcocktails.ui
+package com.dk.barcocktails.ui.main
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -16,6 +16,7 @@ import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.android.ext.android.get
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var requestPermission: ActivityResultLauncher<String>
     private val firebaseAuth = get<FirebaseAuth>()
+    private val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         setUpToolbar()
         setUpNavigation()
         checkCurentUser(savedInstanceState)
-
     }
 
     private fun checkStoragePermission() {

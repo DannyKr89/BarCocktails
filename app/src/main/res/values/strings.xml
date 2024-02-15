@@ -17,4 +17,11 @@
     <string name="name_ingredient">Name Ingredient</string>
     <string name="sign_out">Sign out</string>
     <string name="delete">Delete</string>
+    <string name="admin_password">Admin password</string>
+    <string name="organization">Organization</string>
+    <string name="confirm">Confirm</string>
+    <string name="hint_not_organization">This account is not an organization</string>
+    <string name="hint_enter_password">Please enter the administrator password to edit the database</string>
+    <string name="hint_is_admin">You are the administrator, now you can edit the database</string>
+
 </resources>
