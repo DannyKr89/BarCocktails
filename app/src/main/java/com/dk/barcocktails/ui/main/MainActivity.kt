@@ -11,6 +11,8 @@ import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.ActivityMainBinding
@@ -34,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         checkStoragePermission()
         setUpToolbar()
         setUpNavigation()
-        checkCurentUser(savedInstanceState)
+        checkCurrentUser(savedInstanceState)
     }
 
     private fun checkStoragePermission() {
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkCurentUser(savedInstanceState: Bundle?) {
+    private fun checkCurrentUser(savedInstanceState: Bundle?) {
         if (firebaseAuth.currentUser != null && savedInstanceState == null) {
             navController.navigate(R.id.action_loginFragment_to_cocktailsFragment)
         }
@@ -63,12 +65,15 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
         navController = navHostFragment.findNavController()
 
+        val appBarConfiguration =
+            AppBarConfiguration(setOf(R.id.loginFragment, R.id.cocktails_list, R.id.profile))
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             with(binding) {
-                navView.isVisible = destination.id != R.id.loginFragment
-                toolbar.isVisible = destination.id != R.id.loginFragment
+                navView.isVisible =
+                    destination.id != R.id.loginFragment && destination.id != R.id.signUpFragment
             }
             supportActionBar?.title = destination.label
         }
@@ -77,5 +82,9 @@ class MainActivity : AppCompatActivity() {
     private fun setUpToolbar() {
         setSupportActionBar(binding.toolbar)
         binding.toolbar.isTitleCentered = true
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }

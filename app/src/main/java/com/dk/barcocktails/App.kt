@@ -7,6 +7,7 @@ import com.dk.barcocktails.di.loginModule
 import com.dk.barcocktails.di.newCocktailModule
 import com.dk.barcocktails.di.profileModule
 import com.dk.barcocktails.di.signUpModule
+import com.dk.barcocktails.di.writeModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -25,7 +26,8 @@ class App : Application() {
                 signUpModule,
                 cocktailsModule,
                 newCocktailModule,
-                profileModule
+                profileModule,
+                writeModule
             )
         }
     }

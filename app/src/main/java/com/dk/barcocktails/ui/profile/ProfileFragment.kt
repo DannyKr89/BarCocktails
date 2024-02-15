@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentProfileBinding
 import com.dk.barcocktails.ui.main.MainViewModel
+import com.dk.barcocktails.ui.message.WriteToDeveloperDialogFragment
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -45,11 +46,16 @@ class ProfileFragment : Fragment(), MenuProvider {
             btnConfirm.setOnClickListener {
                 mainViewModel.checkPassword(etPassword.text.toString())
             }
+            tvWrite.setOnClickListener {
+                WriteToDeveloperDialogFragment().show(parentFragmentManager, null)
+            }
         }
     }
 
     private fun initViewModel() {
         mainViewModel.liveDataCheckOrganization.observe(viewLifecycleOwner) { isOrganization ->
+            binding.btnConfirm.isEnabled = isOrganization
+
             when (isOrganization) {
                 true -> {
                     mainViewModel.liveDataCheckPassword.observe(viewLifecycleOwner) { isAdmin ->

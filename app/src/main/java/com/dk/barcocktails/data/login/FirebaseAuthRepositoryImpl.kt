@@ -1,6 +1,10 @@
 package com.dk.barcocktails.data.login
 
 import android.util.Log
+import com.dk.barcocktails.common.ADMIN_PASSWORD
+import com.dk.barcocktails.common.NAME
+import com.dk.barcocktails.common.ORGANIZATION
+import com.dk.barcocktails.common.USERS
 import com.dk.barcocktails.domain.login.LoginRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -51,12 +55,5 @@ class FirebaseAuthRepositoryImpl(
 
     override suspend fun signOut() {
         auth.signOut()
-    }
-
-    companion object {
-        private const val USERS = "Users"
-        private const val ORGANIZATION = "Organization"
-        private const val NAME = "Name"
-        private const val ADMIN_PASSWORD = "Admin password"
     }
 }

@@ -6,7 +6,6 @@ import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -151,7 +150,6 @@ class NewCocktailFragment : Fragment() {
         }
         cursor?.close()
         viewModel.loadImage(res ?: "")
-        Log.d("PhotoPicker", "Selected URI: $res")
     }
 
     private fun imageLoadingVisibility(saturation: Float, boolean: Boolean, progress: Long?) {
@@ -175,7 +173,7 @@ class NewCocktailFragment : Fragment() {
                 .inflate(R.layout.item_ingredient, llIngredients, false)
             val bindingItem = ItemIngredientBinding.bind(ingredient)
             bindingItem.ivDelete.setOnClickListener {
-                Toast.makeText(requireContext(), "delete", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.delete, Toast.LENGTH_SHORT).show()
                 llIngredients.removeView(ingredient)
             }
 
