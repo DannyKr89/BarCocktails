@@ -9,6 +9,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
+import com.dk.barcocktails.common.COCKTAILS
+import com.dk.barcocktails.common.USERS
 import com.dk.barcocktails.databinding.FragmentCocktailsBinding
 import com.dk.barcocktails.domain.cocktails.Cocktail
 import com.dk.barcocktails.domain.cocktails.LoadingState
@@ -51,8 +53,11 @@ class CocktailsFragment : Fragment() {
     }
 
     private fun initViews() {
-        binding.fabAddCocktail.setOnClickListener {
-            findNavController().navigate(R.id.action_cocktails_list_to_newCocktailFragment)
+        with(binding) {
+            rvCocktails.adapter = adapter
+            fabAddCocktail.setOnClickListener {
+                findNavController().navigate(R.id.action_cocktails_list_to_newCocktailFragment)
+            }
         }
     }
 
@@ -117,7 +122,6 @@ class CocktailsFragment : Fragment() {
 
     private fun showData(data: List<Cocktail>) {
         with(binding) {
-            rvCocktails.adapter = adapter
             adapter.submitList(data)
             adapter.listener = {
                 if (isAdmin) {
@@ -149,10 +153,5 @@ class CocktailsFragment : Fragment() {
         listener.remove()
         _binding = null
         super.onDestroyView()
-    }
-
-    companion object {
-        private const val USERS = "Users"
-        private const val COCKTAILS = "Cocktails"
     }
 }

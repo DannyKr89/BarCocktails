@@ -72,8 +72,4 @@ class SignUpFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
-
-    companion object {
-
-    }
 }

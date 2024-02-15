@@ -1,5 +1,8 @@
 package com.dk.barcocktails.data.cocktails
 
+import com.dk.barcocktails.common.COCKTAILS
+import com.dk.barcocktails.common.ID
+import com.dk.barcocktails.common.USERS
 import com.dk.barcocktails.domain.cocktails.Cocktail
 import com.dk.barcocktails.domain.cocktails.CocktailsRepository
 import com.dk.barcocktails.domain.cocktails.LoadingState
@@ -49,9 +52,8 @@ class CocktailsRepositoryImpl(
                         cocktail.id = it.id.toInt() + 1
                     }
                 }
-                val addRequest =
-                    db.collection(USERS).document(user.uid).collection(COCKTAILS)
-                        .document(cocktail.id.toString()).set(cocktail).await()
+                val addRequest = db.collection(USERS).document(user.uid).collection(COCKTAILS)
+                    .document(cocktail.id.toString()).set(cocktail).await()
                 emit(LoadingState.Success("Success"))
             } catch (e: Exception) {
                 emit(LoadingState.Error(e))
@@ -65,19 +67,12 @@ class CocktailsRepositoryImpl(
         val authUser = auth.currentUser
         authUser?.let { user ->
             try {
-                val idRequest =
-                    db.collection(USERS).document(user.uid).collection(COCKTAILS)
-                        .document(cocktail.id.toString()).delete()
+                val idRequest = db.collection(USERS).document(user.uid).collection(COCKTAILS)
+                    .document(cocktail.id.toString()).delete()
             } catch (e: Exception) {
                 throw e
             }
         }
-    }
-
-    companion object {
-        private const val USERS = "Users"
-        private const val COCKTAILS = "Cocktails"
-        private const val ID = "id"
     }
 
 }

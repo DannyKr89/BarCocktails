@@ -1,5 +1,9 @@
 package com.dk.barcocktails.data.profile
 
+import android.provider.Telephony.Carriers.PASSWORD
+import com.dk.barcocktails.common.NAME
+import com.dk.barcocktails.common.ORGANIZATION
+import com.dk.barcocktails.common.USERS
 import com.dk.barcocktails.domain.profile.ProfileRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,7 +23,7 @@ class ProfileRepositoryImpl(
                 if (name != null) {
                     emit(name.toString())
                 } else {
-                    emit("Not an organization")
+                    emit("")
                 }
             } catch (e: Exception) {
                 throw e
@@ -61,12 +65,5 @@ class ProfileRepositoryImpl(
             }
 
         }
-    }
-
-    companion object {
-        private const val USERS = "Users"
-        private const val NAME = "Name"
-        private const val ORGANIZATION = "Organization"
-        private const val PASSWORD = "Admin password"
     }
 }

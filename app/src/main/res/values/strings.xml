@@ -3,7 +3,6 @@
     <string name="email">Email</string>
     <string name="name">Name</string>
     <string name="password">Password</string>
-    <string name="repeat_password">Repeat password</string>
     <string name="require_field">Require field</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
@@ -23,5 +22,8 @@
     <string name="hint_not_organization">This account is not an organization</string>
     <string name="hint_enter_password">Please enter the administrator password to edit the database</string>
     <string name="hint_is_admin">You are the administrator, now you can edit the database</string>
+    <string name="write_to_developer">Write to developer</string>
+    <string name="send_message">Send message</string>
+    <string name="login">Login</string>
 
 </resources>
