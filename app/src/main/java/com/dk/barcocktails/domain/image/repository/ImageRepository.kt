@@ -1,6 +1,6 @@
-package com.dk.barcocktails.domain.image
+package com.dk.barcocktails.domain.image.repository
 
-import com.dk.barcocktails.domain.cocktails.LoadingState
+import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import kotlinx.coroutines.flow.Flow
 
 interface ImageRepository {

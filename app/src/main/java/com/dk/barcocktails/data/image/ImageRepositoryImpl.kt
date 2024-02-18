@@ -1,8 +1,8 @@
 package com.dk.barcocktails.data.image
 
 import android.net.Uri
-import com.dk.barcocktails.domain.cocktails.LoadingState
-import com.dk.barcocktails.domain.image.ImageRepository
+import com.dk.barcocktails.domain.cocktails.state.LoadingState
+import com.dk.barcocktails.domain.image.repository.ImageRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose

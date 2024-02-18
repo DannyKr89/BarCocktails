@@ -1,4 +1,4 @@
-package com.dk.barcocktails.domain.cocktails
+package com.dk.barcocktails.domain.cocktails.model
 
 data class Cocktail(
     var id: Int = 0,

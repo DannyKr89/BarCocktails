@@ -20,7 +20,7 @@ import coil.load
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentNewCocktailBinding
 import com.dk.barcocktails.databinding.ItemIngredientBinding
-import com.dk.barcocktails.domain.cocktails.LoadingState
+import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.set
 
@@ -123,6 +123,7 @@ class NewCocktailFragment : Fragment() {
                 }
 
                 is LoadingState.Success -> {
+                    showProgressBar(false)
                     findNavController().popBackStack()
                 }
             }
@@ -173,10 +174,8 @@ class NewCocktailFragment : Fragment() {
                 .inflate(R.layout.item_ingredient, llIngredients, false)
             val bindingItem = ItemIngredientBinding.bind(ingredient)
             bindingItem.ivDelete.setOnClickListener {
-                Toast.makeText(requireContext(), R.string.delete, Toast.LENGTH_SHORT).show()
                 llIngredients.removeView(ingredient)
             }
-
             ingredient.id = ingredientViewId++
             llIngredients.addView(ingredient)
         }

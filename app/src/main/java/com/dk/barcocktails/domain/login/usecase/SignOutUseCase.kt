@@ -1,4 +1,6 @@
-package com.dk.barcocktails.domain.login
+package com.dk.barcocktails.domain.login.usecase
+
+import com.dk.barcocktails.domain.login.repository.LoginRepository
 
 class SignOutUseCase(private val loginRepository: LoginRepository) {
 

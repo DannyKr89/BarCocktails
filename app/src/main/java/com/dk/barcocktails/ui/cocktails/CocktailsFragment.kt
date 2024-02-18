@@ -12,8 +12,8 @@ import com.dk.barcocktails.R
 import com.dk.barcocktails.common.COCKTAILS
 import com.dk.barcocktails.common.USERS
 import com.dk.barcocktails.databinding.FragmentCocktailsBinding
-import com.dk.barcocktails.domain.cocktails.Cocktail
-import com.dk.barcocktails.domain.cocktails.LoadingState
+import com.dk.barcocktails.domain.cocktails.model.Cocktail
+import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import com.dk.barcocktails.ui.main.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -79,14 +79,14 @@ class CocktailsFragment : Fragment() {
                             true -> {
                                 isAdmin = true
                                 with(binding) {
-                                    fabAddCocktail.isVisible = true
+                                    fabAddCocktail.show()
                                 }
                             }
 
                             false -> {
                                 isAdmin = false
                                 with(binding) {
-                                    fabAddCocktail.isVisible = false
+                                    fabAddCocktail.hide()
                                 }
                             }
                         }

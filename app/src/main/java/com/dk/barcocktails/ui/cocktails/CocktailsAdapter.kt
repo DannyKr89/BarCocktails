@@ -14,7 +14,7 @@ import coil.transform.RoundedCornersTransformation
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.ItemCocktailBinding
 import com.dk.barcocktails.databinding.ItemCocktailIngredientBinding
-import com.dk.barcocktails.domain.cocktails.Cocktail
+import com.dk.barcocktails.domain.cocktails.model.Cocktail
 
 class CocktailsAdapter(private val imgLoader: ImageLoader) :
     ListAdapter<Cocktail, CocktailsAdapter.CocKtailViewHolder>(comparator) {

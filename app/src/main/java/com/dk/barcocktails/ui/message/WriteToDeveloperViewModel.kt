@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dk.barcocktails.domain.message.SendMessageUseCase
+import com.dk.barcocktails.domain.message.usecase.SendMessageUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

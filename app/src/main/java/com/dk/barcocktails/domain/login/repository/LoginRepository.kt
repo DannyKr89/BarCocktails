@@ -1,4 +1,4 @@
-package com.dk.barcocktails.domain.login
+package com.dk.barcocktails.domain.login.repository
 
 import kotlinx.coroutines.flow.Flow
 

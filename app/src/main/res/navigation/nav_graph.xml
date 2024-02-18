@@ -31,7 +31,11 @@
         tools:layout="@layout/fragment_cocktails">
         <action
             android:id="@+id/action_cocktails_list_to_newCocktailFragment"
-            app:destination="@id/newCocktailFragment" />
+            app:destination="@id/newCocktailFragment"
+            app:enterAnim="@anim/new_cocktail_enter"
+            app:exitAnim="@anim/new_cocktail_exit"
+            app:popEnterAnim="@anim/new_cocktail_enter"
+            app:popExitAnim="@anim/new_cocktail_exit" />
     </fragment>
     <fragment
         android:id="@+id/profile"

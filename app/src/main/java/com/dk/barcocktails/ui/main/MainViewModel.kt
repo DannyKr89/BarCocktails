@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dk.barcocktails.domain.profile.CheckOrganizationUseCase
-import com.dk.barcocktails.domain.profile.CheckPasswordUseCase
+import com.dk.barcocktails.domain.profile.usecase.CheckOrganizationUseCase
+import com.dk.barcocktails.domain.profile.usecase.CheckPasswordUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

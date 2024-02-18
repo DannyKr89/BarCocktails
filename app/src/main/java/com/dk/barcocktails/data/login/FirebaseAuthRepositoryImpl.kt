@@ -5,7 +5,7 @@ import com.dk.barcocktails.common.ADMIN_PASSWORD
 import com.dk.barcocktails.common.NAME
 import com.dk.barcocktails.common.ORGANIZATION
 import com.dk.barcocktails.common.USERS
-import com.dk.barcocktails.domain.login.LoginRepository
+import com.dk.barcocktails.domain.login.repository.LoginRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.flow

@@ -1,5 +1,6 @@
-package com.dk.barcocktails.domain.login
+package com.dk.barcocktails.domain.login.usecase
 
+import com.dk.barcocktails.domain.login.repository.LoginRepository
 import kotlinx.coroutines.flow.Flow
 
 class SignInUseCase(private val loginRepository: LoginRepository) {

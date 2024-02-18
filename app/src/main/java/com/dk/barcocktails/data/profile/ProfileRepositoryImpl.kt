@@ -4,7 +4,7 @@ import android.provider.Telephony.Carriers.PASSWORD
 import com.dk.barcocktails.common.NAME
 import com.dk.barcocktails.common.ORGANIZATION
 import com.dk.barcocktails.common.USERS
-import com.dk.barcocktails.domain.profile.ProfileRepository
+import com.dk.barcocktails.domain.profile.repository.ProfileRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.flow

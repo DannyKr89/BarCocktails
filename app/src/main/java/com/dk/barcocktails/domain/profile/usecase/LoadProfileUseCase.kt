@@ -1,5 +1,6 @@
-package com.dk.barcocktails.domain.profile
+package com.dk.barcocktails.domain.profile.usecase
 
+import com.dk.barcocktails.domain.profile.repository.ProfileRepository
 import kotlinx.coroutines.flow.Flow
 
 class LoadProfileUseCase(private val profileRepository: ProfileRepository) {

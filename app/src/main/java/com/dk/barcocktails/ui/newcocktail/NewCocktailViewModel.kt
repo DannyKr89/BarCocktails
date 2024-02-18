@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dk.barcocktails.domain.cocktails.AddCocktailUseCase
-import com.dk.barcocktails.domain.cocktails.Cocktail
-import com.dk.barcocktails.domain.cocktails.LoadingState
-import com.dk.barcocktails.domain.image.LoadImageUseCase
+import com.dk.barcocktails.domain.cocktails.model.Cocktail
+import com.dk.barcocktails.domain.cocktails.state.LoadingState
+import com.dk.barcocktails.domain.cocktails.usecase.AddCocktailUseCase
+import com.dk.barcocktails.domain.image.usecase.LoadImageUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

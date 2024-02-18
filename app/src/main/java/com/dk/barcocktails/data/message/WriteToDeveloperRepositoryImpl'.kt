@@ -3,7 +3,7 @@ package com.dk.barcocktails.data.message
 import com.dk.barcocktails.common.ADMIN
 import com.dk.barcocktails.common.MESSAGE
 import com.dk.barcocktails.common.USERS
-import com.dk.barcocktails.domain.message.WriteToDeveloperRepository
+import com.dk.barcocktails.domain.message.repository.WriteToDeveloperRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.flow

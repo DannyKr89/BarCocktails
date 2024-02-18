@@ -1,4 +1,4 @@
-package com.dk.barcocktails.domain.login
+package com.dk.barcocktails.domain.login.state
 
 sealed class SignInSignUpState {
     data class Success(val success: String) : SignInSignUpState()

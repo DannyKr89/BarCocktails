@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentSignUpBinding
-import com.dk.barcocktails.domain.login.SignInSignUpState
+import com.dk.barcocktails.domain.login.state.SignInSignUpState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

@@ -1,4 +1,4 @@
-package com.dk.barcocktails.domain.message
+package com.dk.barcocktails.domain.message.repository
 
 import kotlinx.coroutines.flow.Flow
 

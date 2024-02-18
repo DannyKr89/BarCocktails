@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dk.barcocktails.domain.login.SignInSignUpState
-import com.dk.barcocktails.domain.login.SignInUseCase
+import com.dk.barcocktails.domain.login.state.SignInSignUpState
+import com.dk.barcocktails.domain.login.usecase.SignInUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

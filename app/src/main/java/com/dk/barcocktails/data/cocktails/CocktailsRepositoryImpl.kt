@@ -3,9 +3,9 @@ package com.dk.barcocktails.data.cocktails
 import com.dk.barcocktails.common.COCKTAILS
 import com.dk.barcocktails.common.ID
 import com.dk.barcocktails.common.USERS
-import com.dk.barcocktails.domain.cocktails.Cocktail
-import com.dk.barcocktails.domain.cocktails.CocktailsRepository
-import com.dk.barcocktails.domain.cocktails.LoadingState
+import com.dk.barcocktails.domain.cocktails.model.Cocktail
+import com.dk.barcocktails.domain.cocktails.repository.CocktailsRepository
+import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
