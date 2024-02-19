@@ -5,15 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentSignUpBinding
 import com.dk.barcocktails.domain.login.state.SignInSignUpState
+import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class SignUpFragment : Fragment() {
+class SignUpFragment : ScopeFragment() {
 
     private var _binding: FragmentSignUpBinding? = null
     private val binding: FragmentSignUpBinding get() = _binding!!

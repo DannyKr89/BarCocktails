@@ -9,16 +9,19 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentProfileBinding
 import com.dk.barcocktails.ui.main.MainViewModel
 import com.dk.barcocktails.ui.message.WriteToDeveloperDialogFragment
+import com.yandex.mobile.ads.banner.BannerAdSize
+import com.yandex.mobile.ads.common.AdRequest
+import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.math.roundToInt
 
-class ProfileFragment : Fragment(), MenuProvider {
+class ProfileFragment : MenuProvider, ScopeFragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding: FragmentProfileBinding get() = _binding!!
@@ -42,6 +45,17 @@ class ProfileFragment : Fragment(), MenuProvider {
 
     private fun initViews() {
         with(binding) {
+            yandexBanner.apply {
+                setAdUnitId("demo-banner-yandex")
+                setAdSize(
+                    BannerAdSize.stickySize(
+                        requireContext(),
+                        (resources.displayMetrics.widthPixels / resources.displayMetrics.density).roundToInt()
+                    )
+                )
+                val adRequest = AdRequest.Builder().build()
+                loadAd(adRequest)
+            }
             etOrganization.isEnabled = false
             btnConfirm.setOnClickListener {
                 mainViewModel.checkPassword(etPassword.text.toString())
@@ -88,6 +102,7 @@ class ProfileFragment : Fragment(), MenuProvider {
     }
 
     override fun onDestroyView() {
+        binding.yandexBanner.destroy()
         _binding = null
         super.onDestroyView()
     }

@@ -8,3 +8,4 @@ const val NAME = "Name"
 const val ADMIN_PASSWORD = "Admin password"
 const val MESSAGE = "Message"
 const val ADMIN = "Admin"
+const val OFFSET = 3
