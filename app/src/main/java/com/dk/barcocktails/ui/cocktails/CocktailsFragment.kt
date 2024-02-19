@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.common.COCKTAILS
+import com.dk.barcocktails.common.OFFSET
 import com.dk.barcocktails.common.USERS
 import com.dk.barcocktails.databinding.FragmentCocktailsBinding
-import com.dk.barcocktails.domain.cocktails.model.Cocktail
+import com.dk.barcocktails.domain.cocktails.model.Banner
+import com.dk.barcocktails.domain.cocktails.model.Item
 import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import com.dk.barcocktails.ui.main.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -120,9 +122,10 @@ class CocktailsFragment : Fragment() {
         }
     }
 
-    private fun showData(data: List<Cocktail>) {
+    private fun showData(data: List<Item>) {
         with(binding) {
-            adapter.submitList(data)
+            val list = prepareAd(data)
+            adapter.submitList(list)
             adapter.listener = {
                 if (isAdmin) {
                     viewModel.deleteCocktail(it)
@@ -142,6 +145,26 @@ class CocktailsFragment : Fragment() {
         }
     }
 
+    private fun prepareAd(data: List<Item>): MutableList<Item> {
+        val list = mutableListOf<Item>()
+        list.addAll(data)
+        var count = 0
+        var adPosition = 0
+        for (i in data.indices) {
+            if (i % OFFSET == 0) {
+                count++
+            }
+        }
+        for (i in 0..list.size - 1 + count) {
+            if (i == adPosition + OFFSET) {
+                val banner = Banner
+                list.add(i, banner)
+                adPosition += OFFSET + 1
+            }
+        }
+        return list
+    }
+
     private fun showProgressBar(isLoading: Boolean) {
         with(binding) {
             progressbar.isVisible = isLoading
@@ -149,6 +172,7 @@ class CocktailsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        adapter.listener = null
         binding.rvCocktails.adapter = null
         listener.remove()
         _binding = null

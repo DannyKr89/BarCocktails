@@ -14,17 +14,17 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentNewCocktailBinding
 import com.dk.barcocktails.databinding.ItemIngredientBinding
 import com.dk.barcocktails.domain.cocktails.state.LoadingState
+import org.koin.androidx.scope.ScopeFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.set
 
-class NewCocktailFragment : Fragment() {
+class NewCocktailFragment : ScopeFragment() {
 
     private var _binding: FragmentNewCocktailBinding? = null
     private val binding: FragmentNewCocktailBinding get() = _binding!!

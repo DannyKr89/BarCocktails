@@ -31,21 +31,27 @@ import com.dk.barcocktails.ui.cocktails.CocktailsAdapter
 import com.dk.barcocktails.ui.cocktails.CocktailsViewModel
 import com.dk.barcocktails.ui.main.MainViewModel
 import com.dk.barcocktails.ui.message.WriteToDeveloperViewModel
+import com.dk.barcocktails.ui.newcocktail.NewCocktailFragment
 import com.dk.barcocktails.ui.newcocktail.NewCocktailViewModel
+import com.dk.barcocktails.ui.profile.ProfileFragment
 import com.dk.barcocktails.ui.profile.ProfileViewModel
+import com.dk.barcocktails.ui.signin.LoginFragment
 import com.dk.barcocktails.ui.signin.LoginViewModel
+import com.dk.barcocktails.ui.signup.SignUpFragment
 import com.dk.barcocktails.ui.signup.SignUpViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    single { FirebaseAuth.getInstance() }
-    single { Firebase.firestore }
-    single { Firebase.storage }
+    single<FirebaseAuth> { FirebaseAuth.getInstance() }
+    single<FirebaseFirestore> { Firebase.firestore }
+    single<FirebaseStorage> { Firebase.storage }
     single<ProfileRepository> { ProfileRepositoryImpl(db = get(), auth = get()) }
     single<LoginRepository> { FirebaseAuthRepositoryImpl(auth = get(), db = get()) }
     single<CheckOrganizationUseCase> { CheckOrganizationUseCase(get()) }
@@ -58,13 +64,18 @@ val appModule = module {
 }
 
 val loginModule = module {
-    single { SignInUseCase(loginRepository = get()) }
-    viewModel<LoginViewModel> { LoginViewModel(signInUseCase = get()) }
+    scope<LoginFragment> {
+        scoped { SignInUseCase(loginRepository = get()) }
+        viewModel<LoginViewModel> { LoginViewModel(signInUseCase = get()) }
+    }
+
 }
 
 val signUpModule = module {
-    single { SignUpUseCase(loginRepository = get()) }
-    viewModel<SignUpViewModel> { SignUpViewModel(signUpUseCase = get()) }
+    scope<SignUpFragment> {
+        scoped { SignUpUseCase(loginRepository = get()) }
+        viewModel<SignUpViewModel> { SignUpViewModel(signUpUseCase = get()) }
+    }
 }
 
 val cocktailsModule = module {
@@ -85,28 +96,35 @@ val cocktailsModule = module {
             getCocktailsUseCase = get(), deleteCocktailUseCase = get()
         )
     }
+
 }
 
 val newCocktailModule = module {
-    single<ImageRepository> { ImageRepositoryImpl(auth = get(), storage = get()) }
-    single<LoadImageUseCase> { LoadImageUseCase(imageRepository = get()) }
-    single { SignOutUseCase(loginRepository = get()) }
-    single<AddCocktailUseCase> { AddCocktailUseCase(cocktailsRepository = get()) }
-    viewModel<NewCocktailViewModel> {
-        NewCocktailViewModel(
-            loadImageUseCase = get(),
-            addCocktailUseCase = get()
-        )
+    scope<NewCocktailFragment> {
+        scoped<ImageRepository> { ImageRepositoryImpl(auth = get(), storage = get()) }
+        scoped<LoadImageUseCase> { LoadImageUseCase(imageRepository = get()) }
+        scoped<AddCocktailUseCase> { AddCocktailUseCase(cocktailsRepository = get()) }
+        viewModel<NewCocktailViewModel> {
+            NewCocktailViewModel(
+                loadImageUseCase = get(),
+                addCocktailUseCase = get()
+            )
+        }
     }
+
 }
 
 val profileModule = module {
-    single<LoadProfileUseCase> { LoadProfileUseCase(profileRepository = get()) }
-    viewModel<ProfileViewModel> {
-        ProfileViewModel(
-            signOutUseCase = get(), loadProfileUseCase = get()
-        )
+    scope<ProfileFragment> {
+        scoped { SignOutUseCase(loginRepository = get()) }
+        scoped<LoadProfileUseCase> { LoadProfileUseCase(profileRepository = get()) }
+        viewModel<ProfileViewModel> {
+            ProfileViewModel(
+                signOutUseCase = get(), loadProfileUseCase = get()
+            )
+        }
     }
+
 }
 val writeModule = module {
     single<WriteToDeveloperRepository> { WriteToDeveloperRepositoryImpl(auth = get(), db = get()) }
