@@ -4,6 +4,9 @@
     <string name="name">Name</string>
     <string name="password">Password</string>
     <string name="require_field">Require field</string>
+    <string name="valid_email">Please enter a valid email address</string>
+    <string name="valid_password">Password too weak, 6 symbols minimum</string>
+    <string name="equal_password">The password and the admin password should not be the same</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="cocktails">Cocktails</string>
@@ -25,5 +28,6 @@
     <string name="write_to_developer">Write to developer</string>
     <string name="send_message">Send message</string>
     <string name="login">Login</string>
+    <string name="description_cocktail">Description</string>
 
 </resources>

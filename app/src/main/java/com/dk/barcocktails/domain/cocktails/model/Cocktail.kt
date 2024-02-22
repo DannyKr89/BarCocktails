@@ -7,4 +7,5 @@ data class Cocktail(
     val ingredients: HashMap<String, Int> = hashMapOf(),
     val method: String = "",
     val garnier: String = "-",
+    val description: String = "",
 ) : Item()

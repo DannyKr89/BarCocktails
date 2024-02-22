@@ -5,15 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentSignUpBinding
 import com.dk.barcocktails.domain.login.state.SignInSignUpState
-import org.koin.androidx.scope.ScopeFragment
+import com.dk.barcocktails.ui.utils.validator.ErrorEnum
+import com.dk.barcocktails.ui.utils.validator.Validator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class SignUpFragment : ScopeFragment() {
+class SignUpFragment : Fragment() {
 
     private var _binding: FragmentSignUpBinding? = null
     private val binding: FragmentSignUpBinding get() = _binding!!
@@ -52,17 +54,39 @@ class SignUpFragment : ScopeFragment() {
                 tilAdminPassword.isVisible = isChecked
             }
             btnLogin.setOnClickListener {
-                val email = etEmail.text.toString()
-                val password = etPassword.text.toString()
-                val name = etName.text.toString()
-                val adminPassword = etAdminPassword.text.toString()
+                val email = etEmail.text.toString().trim()
+                val password = etPassword.text.toString().trim()
+                val name = etName.text.toString().trim()
+                val adminPassword = etAdminPassword.text.toString().trim()
 
-                if (etEmail.text.isNullOrEmpty()) {
-                    etEmail.error = resources.getString(R.string.require_field)
-                } else if (etPassword.text.isNullOrEmpty()) {
-                    etPassword.error = resources.getString(R.string.require_field)
-                } else {
+                val emailValidator = Validator.validateEmail(email)
+                val passwordValidator = Validator.validatePassword(password)
+                val adminPasswordValidator = Validator.validatePassword(adminPassword)
+
+                if (emailValidator.first && passwordValidator.first && name.isNotEmpty() && adminPasswordValidator.first && password != adminPassword) {
                     viewModel.signUpRequest(email, password, name, adminPassword)
+                } else if (password == adminPassword) {
+                    tilAdminPassword.error = resources.getString(R.string.equal_password)
+                } else {
+                    tilEmail.error = when (emailValidator.second) {
+                        ErrorEnum.REQUIRE -> resources.getString(R.string.require_field)
+                        ErrorEnum.VALID -> resources.getString(R.string.valid_email)
+                        null -> null
+                    }
+                    tilPassword.error = when (passwordValidator.second) {
+                        ErrorEnum.REQUIRE -> resources.getString(R.string.require_field)
+                        ErrorEnum.VALID -> resources.getString(R.string.valid_password)
+                        null -> null
+                    }
+                    tilName.error = when (name.isEmpty()) {
+                        true -> resources.getString(R.string.require_field)
+                        false -> null
+                    }
+                    tilAdminPassword.error = when (adminPasswordValidator.second) {
+                        ErrorEnum.REQUIRE -> resources.getString(R.string.require_field)
+                        ErrorEnum.VALID -> resources.getString(R.string.valid_password)
+                        null -> null
+                    }
                 }
             }
         }

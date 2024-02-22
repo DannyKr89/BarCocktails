@@ -36,6 +36,9 @@
             app:exitAnim="@anim/new_cocktail_exit"
             app:popEnterAnim="@anim/new_cocktail_enter"
             app:popExitAnim="@anim/new_cocktail_exit" />
+        <action
+            android:id="@+id/action_cocktails_list_to_cocktailDetailsFragment"
+            app:destination="@id/cocktailDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profile"
@@ -48,6 +51,9 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_profile_to_writeToDeveloperDialogFragment"
+            app:destination="@id/writeToDeveloperDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/newCocktailFragment"
@@ -58,4 +64,13 @@
         android:id="@+id/signUpFragment"
         android:name="com.dk.barcocktails.ui.signup.SignUpFragment"
         android:label="@string/sign_up" />
+    <dialog
+        android:id="@+id/cocktailDetailsFragment"
+        android:name="com.dk.barcocktails.ui.detail.CocktailDetailsFragment"
+        android:label="fragment_cocktail_details"
+        tools:layout="@layout/fragment_cocktail_details" />
+    <dialog
+        android:id="@+id/writeToDeveloperDialogFragment"
+        android:name="com.dk.barcocktails.ui.message.WriteToDeveloperDialogFragment"
+        android:label="WriteToDeveloperDialogFragment" />
 </navigation>

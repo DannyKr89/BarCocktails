@@ -1,6 +1,6 @@
 package com.dk.barcocktails.data.profile
 
-import android.provider.Telephony.Carriers.PASSWORD
+import com.dk.barcocktails.common.ADMIN_PASSWORD
 import com.dk.barcocktails.common.NAME
 import com.dk.barcocktails.common.ORGANIZATION
 import com.dk.barcocktails.common.USERS
@@ -36,7 +36,7 @@ class ProfileRepositoryImpl(
         authUser?.let { user ->
             try {
                 val result = db.collection(USERS).document(user.uid).get().await()
-                val passwordResult = result.get(PASSWORD).toString()
+                val passwordResult = result.get(ADMIN_PASSWORD).toString()
                 if (passwordResult == password) {
                     emit(true)
                 } else {

@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.PopupMenu
 import coil.ImageLoader
 import coil.load
+import coil.size.Scale
 import coil.transform.RoundedCornersTransformation
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.ItemCocktailBinding
@@ -15,11 +16,15 @@ import com.dk.barcocktails.domain.cocktails.model.Cocktail
 class CocktailViewHolder(
     private val binding: ItemCocktailBinding,
     private val imgLoader: ImageLoader,
-    private var listener: ((Cocktail) -> Unit)?
+    private var clickListener: ((Cocktail) -> Unit)?,
+    private var longClickListener: ((Cocktail) -> Unit)?
 ) : ItemViewHolder(binding) {
 
     fun bind(cocktail: Cocktail) {
         with(binding) {
+            root.setOnClickListener {
+                clickListener?.invoke(cocktail)
+            }
             root.setOnLongClickListener {
                 showPopupMenu(it, cocktail)
                 true
@@ -38,9 +43,9 @@ class CocktailViewHolder(
             }
             if (cocktail.image.isNotEmpty()) {
                 ivImage.load(cocktail.image, imgLoader) {
-                    crossfade(true)
+                    memoryCacheKey(cocktail.id.toString())
+                    scale(Scale.FILL)
                     transformations(RoundedCornersTransformation(20f))
-                    placeholder(R.drawable.ic_cocktail)
                 }
             } else {
                 ivImage.load(R.drawable.ic_cocktail)
@@ -56,7 +61,7 @@ class CocktailViewHolder(
         popupMenu.setOnMenuItemClickListener {
             return@setOnMenuItemClickListener when (it.itemId) {
                 R.id.delete_item -> {
-                    listener?.invoke(cocktail)
+                    longClickListener?.invoke(cocktail)
                     true
                 }
 

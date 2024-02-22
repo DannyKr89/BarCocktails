@@ -56,6 +56,7 @@ class CocktailsFragment : Fragment() {
 
     private fun initViews() {
         with(binding) {
+            fabAddCocktail.isVisible = false
             rvCocktails.adapter = adapter
             fabAddCocktail.setOnClickListener {
                 findNavController().navigate(R.id.action_cocktails_list_to_newCocktailFragment)
@@ -72,38 +73,6 @@ class CocktailsFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        mainViewModel.checkOrganization()
-        mainViewModel.liveDataCheckOrganization.observe(viewLifecycleOwner) { isOrganization ->
-            when (isOrganization) {
-                true -> {
-                    mainViewModel.liveDataCheckPassword.observe(viewLifecycleOwner) { admin ->
-                        when (admin) {
-                            true -> {
-                                isAdmin = true
-                                with(binding) {
-                                    fabAddCocktail.show()
-                                }
-                            }
-
-                            false -> {
-                                isAdmin = false
-                                with(binding) {
-                                    fabAddCocktail.hide()
-                                }
-                            }
-                        }
-                    }
-                }
-
-                false -> {
-                    with(binding) {
-                        isAdmin = true
-                        fabAddCocktail.isVisible = !isOrganization
-                    }
-                }
-            }
-        }
-
         viewModel.liveData.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is LoadingState.Error -> {
@@ -120,13 +89,30 @@ class CocktailsFragment : Fragment() {
                 }
             }
         }
+        mainViewModel.checkOrganization()
+        mainViewModel.liveDataCheckOrganization.observe(viewLifecycleOwner) { isOrganization ->
+            mainViewModel.checkPassword(mainViewModel.pass)
+            mainViewModel.liveDataCheckPassword.observe(viewLifecycleOwner) { isAdministrator ->
+                setupAdmin(isOrganization, isAdministrator)
+            }
+        }
     }
+
+    private fun setupAdmin(isOrganization: Boolean, isAdministrator: Boolean) {
+        isAdmin = isAdministrator
+        binding.fabAddCocktail.isVisible = isOrganization == isAdministrator
+    }
+
 
     private fun showData(data: List<Item>) {
         with(binding) {
             val list = prepareAd(data)
             adapter.submitList(list)
-            adapter.listener = {
+            adapter.clickListener = {
+                mainViewModel.cocktail(it)
+                findNavController().navigate(R.id.action_cocktails_list_to_cocktailDetailsFragment)
+            }
+            adapter.longClickListener = {
                 if (isAdmin) {
                     viewModel.deleteCocktail(it)
                 } else {
@@ -172,7 +158,6 @@ class CocktailsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        adapter.listener = null
         binding.rvCocktails.adapter = null
         listener.remove()
         _binding = null

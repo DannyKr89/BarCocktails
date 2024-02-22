@@ -17,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.yandex.mobile.ads.common.MobileAds
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,8 +26,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var requestPermission: ActivityResultLauncher<String>
-    private val firebaseAuth = get<FirebaseAuth>()
+    private val firebaseAuth: FirebaseAuth = get()
     private val viewModel: MainViewModel by viewModel()
+
+    private val destinationListener by lazy {
+        NavController.OnDestinationChangedListener { _, destination, _ ->
+            with(binding) {
+                navView.isVisible =
+                    destination.id != R.id.loginFragment && destination.id != R.id.signUpFragment
+            }
+            supportActionBar?.title = destination.label
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +49,8 @@ class MainActivity : AppCompatActivity() {
         setUpToolbar()
         setUpNavigation()
         checkCurrentUser(savedInstanceState)
+        MobileAds.initialize(this) {
+        }
     }
 
     private fun checkStoragePermission() {
@@ -70,13 +84,7 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            with(binding) {
-                navView.isVisible =
-                    destination.id != R.id.loginFragment && destination.id != R.id.signUpFragment
-            }
-            supportActionBar?.title = destination.label
-        }
+        navController.addOnDestinationChangedListener(destinationListener)
     }
 
     private fun setUpToolbar() {

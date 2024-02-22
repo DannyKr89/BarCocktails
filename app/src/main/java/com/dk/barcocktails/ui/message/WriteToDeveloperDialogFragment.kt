@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.dk.barcocktails.databinding.DialogFragmentWriteToDeveloperBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.get
 
 class WriteToDeveloperDialogFragment : DialogFragment() {
 
     private var _binding: DialogFragmentWriteToDeveloperBinding? = null
     private val binding: DialogFragmentWriteToDeveloperBinding get() = _binding!!
-    private val viewModel: WriteToDeveloperViewModel by viewModel()
+    private val viewModel: WriteToDeveloperViewModel = get()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = DialogFragmentWriteToDeveloperBinding.inflate(layoutInflater)
         return binding.root
     }

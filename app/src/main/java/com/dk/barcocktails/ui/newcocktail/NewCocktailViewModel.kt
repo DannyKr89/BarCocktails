@@ -33,11 +33,12 @@ class NewCocktailViewModel(
         image: String,
         ingredients: HashMap<String, Int>,
         method: String,
-        garnier: String
+        garnier: String,
+        description: String
     ) {
         val cocktail = Cocktail(
             0,
-            name, image, ingredients, method, garnier
+            name, image, ingredients, method, garnier, description
         )
         viewModelScope.launch(Dispatchers.IO) {
             addCocktailUseCase.invoke(cocktail).collect {

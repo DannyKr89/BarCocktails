@@ -78,9 +78,4 @@
         android:text="@string/write_to_developer"
         android:textColor="#03A9F4" />
 
-    <com.yandex.mobile.ads.banner.BannerAdView
-        android:id="@+id/yandex_banner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
 </LinearLayout>

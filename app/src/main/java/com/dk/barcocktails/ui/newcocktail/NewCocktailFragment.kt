@@ -14,22 +14,22 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import coil.load
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentNewCocktailBinding
 import com.dk.barcocktails.databinding.ItemIngredientBinding
 import com.dk.barcocktails.domain.cocktails.state.LoadingState
-import org.koin.androidx.scope.ScopeFragment
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.get
 import kotlin.collections.set
 
-class NewCocktailFragment : ScopeFragment() {
+class NewCocktailFragment : Fragment() {
 
     private var _binding: FragmentNewCocktailBinding? = null
     private val binding: FragmentNewCocktailBinding get() = _binding!!
     private var uriImage: String = ""
-    private val viewModel: NewCocktailViewModel by viewModel()
+    private val viewModel: NewCocktailViewModel = get()
 
     private var ingredientViewId = 0
 
@@ -70,6 +70,7 @@ class NewCocktailFragment : ScopeFragment() {
                 val name = etName.text.toString()
                 val method = etMethod.text.toString()
                 val garnier = etGarnier.text.toString()
+                val description = etDescription.text.toString()
                 val ingredients = HashMap<String, Int>()
 
                 llIngredients.forEach {
@@ -88,7 +89,7 @@ class NewCocktailFragment : ScopeFragment() {
                         }
                     }
                 }
-                viewModel.addCocktail(name, uriImage, ingredients, method, garnier)
+                viewModel.addCocktail(name, uriImage, ingredients, method, garnier, description)
             }
         }
     }

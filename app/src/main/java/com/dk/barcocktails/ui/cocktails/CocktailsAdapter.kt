@@ -17,7 +17,8 @@ import com.dk.barcocktails.ui.cocktails.viewholder.ItemViewHolder
 class CocktailsAdapter(private val imgLoader: ImageLoader) :
     ListAdapter<Item, ItemViewHolder>(comparator) {
 
-    var listener: ((Cocktail) -> Unit)? = null
+    var clickListener: ((Cocktail) -> Unit)? = null
+    var longClickListener: ((Cocktail) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return when (viewType) {
@@ -30,7 +31,7 @@ class CocktailsAdapter(private val imgLoader: ImageLoader) :
             ITEM_COCKTAIL -> {
                 val binding =
                     ItemCocktailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                CocktailViewHolder(binding, imgLoader, listener)
+                CocktailViewHolder(binding, imgLoader, clickListener, longClickListener)
             }
 
             else -> {

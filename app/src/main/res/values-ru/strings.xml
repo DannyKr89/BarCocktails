@@ -6,6 +6,8 @@
     <string name="name">Наименование</string>
     <string name="password">Пароль</string>
     <string name="require_field">Обязательное поле</string>
+    <string name="valid_email">" Пожалуйста, введите действительный адрес электронной почты"</string>
+    <string name="valid_password">Слабый пароль, минимум 6 символов</string>
     <string name="sign_in">Войти</string>
     <string name="sign_up">Регистрация</string>
     <string name="cocktails">Коктейли</string>
@@ -26,4 +28,6 @@
     <string name="hint_is_admin">Вы администратор, теперь можно редактировать базу данных</string>
     <string name="write_to_developer">Написать разработчику</string>
     <string name="send_message">Отправить сообщение</string>
+    <string name="description_cocktail">Описание</string>
+    <string name="equal_password">Пароли не должны быть одинаковыми</string>
 </resources>
