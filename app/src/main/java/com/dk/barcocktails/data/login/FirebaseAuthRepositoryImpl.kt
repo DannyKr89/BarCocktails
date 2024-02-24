@@ -5,7 +5,9 @@ import com.dk.barcocktails.common.ADMIN_PASSWORD
 import com.dk.barcocktails.common.NAME
 import com.dk.barcocktails.common.ORGANIZATION
 import com.dk.barcocktails.common.USERS
+import com.dk.barcocktails.domain.login.model.User
 import com.dk.barcocktails.domain.login.repository.LoginRepository
+import com.dk.barcocktails.domain.login.state.SignInSignUpState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.flow
@@ -16,14 +18,15 @@ class FirebaseAuthRepositoryImpl(
     private val db: FirebaseFirestore
 ) : LoginRepository {
 
-    override suspend fun signIn(email: String, password: String) = flow<Boolean> {
+    override suspend fun signIn(email: String, password: String) = flow<SignInSignUpState> {
         try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             Log.d("FBA-Success", result.user.toString())
-            emit(true)
+            val user = User(result.user?.uid)
+            emit(SignInSignUpState.Success(user))
         } catch (e: Exception) {
             Log.d("FBA-Error", e.message.toString())
-            emit(false)
+            emit(SignInSignUpState.Error(e))
         }
     }
 
@@ -32,7 +35,7 @@ class FirebaseAuthRepositoryImpl(
         password: String,
         name: String,
         adminPassword: String
-    ) = flow<Boolean> {
+    ) = flow<SignInSignUpState> {
         val user = hashMapOf<String, Any>()
         if (name.isEmpty() || adminPassword.isEmpty()) {
             user[ORGANIZATION] = false
@@ -46,10 +49,10 @@ class FirebaseAuthRepositoryImpl(
             val userUid = result.user?.uid
             userUid?.let {
                 db.collection(USERS).document(it).set(user).await()
-                emit(true)
+                emit(SignInSignUpState.Success(User(userUid)))
             }
         } catch (e: Exception) {
-            emit(false)
+            emit(SignInSignUpState.Error(e))
         }
     }
 

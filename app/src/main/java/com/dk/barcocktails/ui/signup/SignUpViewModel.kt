@@ -19,13 +19,8 @@ class SignUpViewModel(
     fun signUpRequest(email: String, password: String, name: String, adminPassword: String) {
         viewModelScope.launch(Dispatchers.IO) {
             signUpUseCase.invoke(email, password, name, adminPassword).collect {
-                if (it) {
-                    _signUpState.postValue(SignInSignUpState.Success("Success"))
-                } else {
-                    _signUpState.postValue(SignInSignUpState.Error(Throwable("Error")))
-                }
+                    _signUpState.postValue(it)
             }
-
         }
     }
 }

@@ -21,6 +21,7 @@ import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentNewCocktailBinding
 import com.dk.barcocktails.databinding.ItemIngredientBinding
 import com.dk.barcocktails.domain.cocktails.state.LoadingState
+import com.google.firebase.storage.FirebaseStorage
 import org.koin.android.ext.android.get
 import kotlin.collections.set
 
@@ -34,8 +35,9 @@ class NewCocktailFragment : Fragment() {
     private var ingredientViewId = 0
 
     private val pickMedia =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri != null) {
+                binding.ivImageCocktail.load(uri)
                 parseUri(uri)
             }
         }
@@ -60,7 +62,7 @@ class NewCocktailFragment : Fragment() {
             addIngredientView()
 
             ivImageCocktail.setOnClickListener {
-                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                pickMedia.launch("image/*")
             }
 
             fabAddIngredient.setOnClickListener {
@@ -79,11 +81,11 @@ class NewCocktailFragment : Fragment() {
                         val ingredientName = etIngredientName.text.toString()
                         val ingredientValue = etIngredientValue.text.toString()
                         if (name.isEmpty()) {
-                            etName.error = "Required"
+                            etName.error = resources.getString(R.string.require_field)
                         } else if (ingredientName.isEmpty()) {
-                            etIngredientName.error = "Required"
+                            etIngredientName.error = resources.getString(R.string.require_field)
                         } else if (ingredientValue.isEmpty()) {
-                            etIngredientValue.error = "Required"
+                            etIngredientValue.error = resources.getString(R.string.require_field)
                         } else {
                             ingredients[ingredientName] = ingredientValue.toInt()
                         }
@@ -98,9 +100,7 @@ class NewCocktailFragment : Fragment() {
         viewModel.loadImageLiveData.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is LoadingState.Error -> Toast.makeText(
-                    requireContext(),
-                    state.error.message,
-                    Toast.LENGTH_SHORT
+                    requireContext(), state.error.message, Toast.LENGTH_SHORT
                 ).show()
 
                 is LoadingState.Loading -> {
@@ -138,20 +138,8 @@ class NewCocktailFragment : Fragment() {
     }
 
     private fun parseUri(uri: Uri) {
-        binding.ivImageCocktail.load(uri)
-        var res: String? = null
-        val proj = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor: Cursor? =
-            requireActivity().contentResolver.query(uri, proj, null, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val columnIndex: Int =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                res = cursor.getString(columnIndex)
-            }
-        }
-        cursor?.close()
-        viewModel.loadImage(res ?: "")
+
+        viewModel.loadImage(uri.toString())
     }
 
     private fun imageLoadingVisibility(saturation: Float, boolean: Boolean, progress: Long?) {

@@ -1,6 +1,7 @@
 package com.dk.barcocktails.domain.login.usecase
 
 import com.dk.barcocktails.domain.login.repository.LoginRepository
+import com.dk.barcocktails.domain.login.state.SignInSignUpState
 import kotlinx.coroutines.flow.Flow
 
 class SignUpUseCase(private val loginRepository: LoginRepository) {
@@ -10,7 +11,7 @@ class SignUpUseCase(private val loginRepository: LoginRepository) {
         password: String,
         name: String,
         adminPassword: String
-    ): Flow<Boolean> {
+    ): Flow<SignInSignUpState> {
         return loginRepository.signUp(email, password, name, adminPassword)
     }
 }

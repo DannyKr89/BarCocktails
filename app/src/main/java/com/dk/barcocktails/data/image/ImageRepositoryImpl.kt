@@ -1,12 +1,14 @@
 package com.dk.barcocktails.data.image
 
 import android.net.Uri
+import android.util.Log
 import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import com.dk.barcocktails.domain.image.repository.ImageRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import java.io.File
 
 class ImageRepositoryImpl(
