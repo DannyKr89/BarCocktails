@@ -1,60 +1,82 @@
 package com.dk.barcocktails.data.cocktails
 
-import android.net.Uri
-import com.dk.barcocktails.domain.cocktails.Cocktail
-import com.dk.barcocktails.domain.cocktails.CocktailsRepository
+import com.dk.barcocktails.common.COCKTAILS
+import com.dk.barcocktails.common.ID
+import com.dk.barcocktails.common.USERS
+import com.dk.barcocktails.domain.cocktails.model.Cocktail
+import com.dk.barcocktails.domain.cocktails.repository.CocktailsRepository
+import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import java.io.File
 
 
 class CocktailsRepositoryImpl(
     private val db: FirebaseFirestore,
-    auth: FirebaseAuth,
+    private val auth: FirebaseAuth,
     private val storage: FirebaseStorage
-) :
-    CocktailsRepository {
+) : CocktailsRepository {
 
-    private val authUser = auth.currentUser
-    override suspend fun getCocktails(): List<Cocktail> {
+    override suspend fun getCocktails() = flow<LoadingState<List<Cocktail>>> {
+        emit(LoadingState.Loading())
+        val authUser = auth.currentUser
         val list = mutableListOf<Cocktail>()
         authUser?.let { user ->
-            val result =
-                db.collection("Users").document(user.uid).collection("Cocktails").get().await()
-            result.documents.forEach { snapshot ->
-                val cocktail = snapshot.toObject<Cocktail>()
-                cocktail?.let {
-                    list.add(it)
+            try {
+                val result = db.collection(USERS).document(user.uid).collection(COCKTAILS)
+                    .orderBy(ID, Query.Direction.DESCENDING).get().await()
+                result.documents.forEach { snapshot ->
+                    val cocktail = snapshot.toObject<Cocktail>()
+                    cocktail?.let {
+                        list.add(it)
+                    }
                 }
+                emit(LoadingState.Success(list))
+            } catch (e: Exception) {
+                emit(LoadingState.Error(e))
             }
+
         }
-        return list
     }
 
-    override suspend fun addCocktail(cocktail: Cocktail) {
+    override suspend fun addCocktail(cocktail: Cocktail) = flow {
+        emit(LoadingState.Loading())
+        val authUser = auth.currentUser
         authUser?.let { user ->
-            val file = Uri.fromFile(File(cocktail.image.toString()))
-            val riversRef = storage.reference.child("${user.uid}/${file.lastPathSegment}")
-            val requst = riversRef.putFile(file).await()
-            val uriTask = riversRef.downloadUrl.await()
+            try {
+                val idRequest =
+                    db.collection(USERS).document(user.uid).collection(COCKTAILS).get().await()
+                idRequest.forEach {
+                    if (it.id.toInt() >= cocktail.id) {
+                        cocktail.id = it.id.toInt() + 1
+                    }
+                }
+                val addRequest = db.collection(USERS).document(user.uid).collection(COCKTAILS)
+                    .document(cocktail.id.toString()).set(cocktail).await()
+                emit(LoadingState.Success("Success"))
+            } catch (e: Exception) {
+                emit(LoadingState.Error(e))
+            }
 
-            cocktail.image = uriTask.toString()
-            val result =
-                db.collection("Users").document(user.uid).collection("Cocktails").get().await()
-
-            cocktail.id = result.size()
-            db.collection("Users").document(user.uid).collection("Cocktails").add(
-                cocktail
-            ).await()
         }
-
     }
 
 
     override suspend fun deleteCocktails(cocktail: Cocktail) {
-
+        val authUser = auth.currentUser
+        authUser?.let { user ->
+            try {
+                storage.reference.child("${authUser.uid}/${cocktail.name}.jpg").delete().await()
+                val idRequest = db.collection(USERS).document(user.uid).collection(COCKTAILS)
+                    .document(cocktail.id.toString()).delete().await()
+            } catch (e: Exception) {
+                throw e
+            }
+        }
     }
+
 }

@@ -3,8 +3,10 @@
     <string name="email">Email</string>
     <string name="name">Name</string>
     <string name="password">Password</string>
-    <string name="repeat_password">Repeat password</string>
     <string name="require_field">Require field</string>
+    <string name="valid_email">Please enter a valid email address</string>
+    <string name="valid_password">Password too weak, 6 symbols minimum</string>
+    <string name="equal_password">The password and the admin password should not be the same</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="cocktails">Cocktails</string>
@@ -15,4 +17,17 @@
     <string name="add_cocktail">Add cocktail</string>
     <string name="value">Value</string>
     <string name="name_ingredient">Name Ingredient</string>
+    <string name="sign_out">Sign out</string>
+    <string name="delete">Delete</string>
+    <string name="admin_password">Admin password</string>
+    <string name="organization">Organization</string>
+    <string name="confirm">Confirm</string>
+    <string name="hint_not_organization">This account is not an organization</string>
+    <string name="hint_enter_password">Please enter the administrator password to edit the database</string>
+    <string name="hint_is_admin">You are the administrator, now you can edit the database</string>
+    <string name="write_to_developer">Write to developer</string>
+    <string name="send_message">Send message</string>
+    <string name="login">Login</string>
+    <string name="description_cocktail">Description</string>
+
 </resources>

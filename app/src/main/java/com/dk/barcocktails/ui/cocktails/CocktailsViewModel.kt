@@ -4,27 +4,37 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dk.barcocktails.domain.cocktails.GetCocktailsUseCase
-import com.dk.barcocktails.domain.cocktails.LoadingState
+import com.dk.barcocktails.domain.cocktails.model.Cocktail
+import com.dk.barcocktails.domain.cocktails.state.LoadingState
+import com.dk.barcocktails.domain.cocktails.usecase.DeleteCocktailUseCase
+import com.dk.barcocktails.domain.cocktails.usecase.GetCocktailsUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CocktailsViewModel(
     private val getCocktailsUseCase: GetCocktailsUseCase,
-    private val _liveData: MutableLiveData<LoadingState> = MutableLiveData()
+    private val deleteCocktailUseCase: DeleteCocktailUseCase,
+    private val _liveData: MutableLiveData<LoadingState<List<Cocktail>>> = MutableLiveData()
 ) : ViewModel() {
 
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         _liveData.postValue(LoadingState.Error(throwable))
     }
 
-    val liveData: LiveData<LoadingState> get() = _liveData
+    val liveData: LiveData<LoadingState<List<Cocktail>>> get() = _liveData
 
     fun getCocktails() {
-        _liveData.postValue(LoadingState.Loading)
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            _liveData.postValue(LoadingState.Success(getCocktailsUseCase.invoke()))
+            getCocktailsUseCase.invoke().collect {
+                _liveData.postValue(it)
+            }
+        }
+    }
+
+    fun deleteCocktail(cocktail: Cocktail) {
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteCocktailUseCase.invoke(cocktail)
         }
     }
 }

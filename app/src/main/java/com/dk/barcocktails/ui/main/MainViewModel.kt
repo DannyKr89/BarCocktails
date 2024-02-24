@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dk.barcocktails.domain.cocktails.model.Cocktail
+import com.dk.barcocktails.domain.login.model.User
 import com.dk.barcocktails.domain.profile.usecase.CheckOrganizationUseCase
 import com.dk.barcocktails.domain.profile.usecase.CheckPasswordUseCase
 import kotlinx.coroutines.Dispatchers
@@ -16,11 +17,13 @@ class MainViewModel(
     private val _liveDataCheckPassword: MutableLiveData<Boolean> = MutableLiveData(),
     private val checkPasswordUseCase: CheckPasswordUseCase,
     private val _liveDataCocktail: MutableLiveData<Cocktail> = MutableLiveData(),
+    private val _liveDataUser: MutableLiveData<User> = MutableLiveData(),
 ) : ViewModel() {
 
     val liveDataCheckOrganization: LiveData<Boolean> get() = _liveDataCheckOrganization
     val liveDataCheckPassword: LiveData<Boolean> get() = _liveDataCheckPassword
     val liveDataCocktail: LiveData<Cocktail> get() = _liveDataCocktail
+    val liveDataUser: LiveData<User> get() = _liveDataUser
 
     private var _pass = ""
     val pass get() = _pass
@@ -40,6 +43,10 @@ class MainViewModel(
                 _liveDataCheckOrganization.postValue(it)
             }
         }
+    }
+
+    fun user(user: User) {
+        _liveDataUser.postValue(user)
     }
 
     fun cocktail(cocktail: Cocktail) {

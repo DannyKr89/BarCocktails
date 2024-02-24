@@ -1,8 +1,5 @@
 package com.dk.barcocktails.ui.newcocktail
 
-import android.database.Cursor
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -30,13 +27,19 @@ class NewCocktailFragment : Fragment() {
     private val binding: FragmentNewCocktailBinding get() = _binding!!
     private var uriImage: String = ""
     private val viewModel: NewCocktailViewModel = get()
-
     private var ingredientViewId = 0
+    private var name = ""
+    private var method = ""
+    private var garnier = ""
+    private var description = ""
+    private val ingredients = HashMap<String, Int>()
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                parseUri(uri)
+                uriImage = uri.toString()
+                binding.ivImageCocktail.imageTintMode = null
+                binding.ivImageCocktail.load(uriImage)
             }
         }
 
@@ -67,30 +70,46 @@ class NewCocktailFragment : Fragment() {
                 addIngredientView()
             }
             btnAddCocktail.setOnClickListener {
-                val name = etName.text.toString()
-                val method = etMethod.text.toString()
-                val garnier = etGarnier.text.toString()
-                val description = etDescription.text.toString()
-                val ingredients = HashMap<String, Int>()
+                name = etName.text.toString().trim()
+                method = etMethod.text.toString().trim()
+                garnier = etGarnier.text.toString().trim()
+                description = etDescription.text.toString().trim()
 
                 llIngredients.forEach {
                     val bindingItem = ItemIngredientBinding.bind(it)
                     with(bindingItem) {
-                        val ingredientName = etIngredientName.text.toString()
-                        val ingredientValue = etIngredientValue.text.toString()
-                        if (name.isEmpty()) {
-                            etName.error = "Required"
-                        } else if (ingredientName.isEmpty()) {
-                            etIngredientName.error = "Required"
-                        } else if (ingredientValue.isEmpty()) {
-                            etIngredientValue.error = "Required"
-                        } else {
+                        val ingredientName = etIngredientName.text.toString().trim()
+                        val ingredientValue = etIngredientValue.text.toString().trim()
+                        if (name.isNotEmpty() && ingredientName.isNotEmpty() && ingredientValue.isNotEmpty()) {
                             ingredients[ingredientName] = ingredientValue.toInt()
+                            if (uriImage.isNotEmpty()) {
+                                uploadImage()
+                            } else {
+                                createCocktail()
+                            }
+                        } else {
+                            etName.error = showError(name)
+                            etIngredientName.error = showError(ingredientName)
+                            etIngredientValue.error = showError(ingredientValue)
                         }
                     }
                 }
-                viewModel.addCocktail(name, uriImage, ingredients, method, garnier, description)
             }
+        }
+    }
+
+    private fun uploadImage() {
+        val bitmap = MediaStore.Images.Media.getBitmap(
+            requireActivity().contentResolver,
+            Uri.parse(uriImage)
+        )
+        viewModel.loadImage(bitmap, name)
+    }
+
+    private fun showError(input: String): CharSequence? {
+        return when (input.isEmpty()) {
+            true -> resources.getString(R.string.require_field)
+            false -> null
         }
     }
 
@@ -98,18 +117,17 @@ class NewCocktailFragment : Fragment() {
         viewModel.loadImageLiveData.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is LoadingState.Error -> Toast.makeText(
-                    requireContext(),
-                    state.error.message,
-                    Toast.LENGTH_SHORT
+                    requireContext(), state.error.message, Toast.LENGTH_SHORT
                 ).show()
 
                 is LoadingState.Loading -> {
-                    imageLoadingVisibility(0f, false, state.progress)
+                    imageLoadingVisibility(false, state.progress)
                 }
 
                 is LoadingState.Success -> {
-                    imageLoadingVisibility(1f, true, null)
+                    imageLoadingVisibility(true, 100)
                     uriImage = state.data
+                    createCocktail()
                 }
             }
         }
@@ -130,6 +148,12 @@ class NewCocktailFragment : Fragment() {
             }
         }
     }
+    private fun createCocktail() {
+        with(binding) {
+            ivImageCocktail.load(uriImage)
+            viewModel.addCocktail(name, uriImage, ingredients, method, garnier, description)
+        }
+    }
 
     private fun showProgressBar(isLoading: Boolean) {
         with(binding) {
@@ -137,29 +161,8 @@ class NewCocktailFragment : Fragment() {
         }
     }
 
-    private fun parseUri(uri: Uri) {
-        binding.ivImageCocktail.load(uri)
-        var res: String? = null
-        val proj = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor: Cursor? =
-            requireActivity().contentResolver.query(uri, proj, null, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val columnIndex: Int =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                res = cursor.getString(columnIndex)
-            }
-        }
-        cursor?.close()
-        viewModel.loadImage(res ?: "")
-    }
-
-    private fun imageLoadingVisibility(saturation: Float, boolean: Boolean, progress: Long?) {
-        val matrix = ColorMatrix()
-        matrix.setSaturation(saturation)
-        val filter = ColorMatrixColorFilter(matrix)
+    private fun imageLoadingVisibility(boolean: Boolean, progress: Long?) {
         with(binding) {
-            ivImageCocktail.colorFilter = filter
             btnAddCocktail.isEnabled = boolean
             progressImageLoading.isVisible = !boolean
             if (progress != null) {

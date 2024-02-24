@@ -10,21 +10,17 @@ class BannerViewHolder(private val binding: ItemBannerBinding) :
 
     fun bind() {
         with(binding) {
+            val adRequest = AdRequest.Builder().build()
             bannerView.apply {
                 setAdUnitId("R-M-6139358-1")
                 setAdSize(
                     BannerAdSize.stickySize(
-                        root.context,
+                        rootView.context.applicationContext,
                         (resources.displayMetrics.widthPixels / resources.displayMetrics.density).roundToInt()
                     )
                 )
-                val adRequest = AdRequest.Builder().build()
                 loadAd(adRequest)
             }
         }
-    }
-
-    fun unbind() {
-        binding.bannerView.destroy()
     }
 }

@@ -1,25 +1,27 @@
 package com.dk.barcocktails.data.image
 
-import android.net.Uri
+import android.graphics.Bitmap
 import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import com.dk.barcocktails.domain.image.repository.ImageRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import java.io.File
+import java.io.ByteArrayOutputStream
 
 class ImageRepositoryImpl(
     private val auth: FirebaseAuth, private val storage: FirebaseStorage
 ) : ImageRepository {
 
-    override suspend fun loadImage(uri: String) = callbackFlow {
+    override suspend fun loadImage(bitmap: Bitmap, name: String) = callbackFlow {
         val authUser = auth.currentUser
         authUser?.let { user ->
             try {
-                val file = Uri.fromFile(File(uri))
-                val storageRef = storage.reference.child("${user.uid}/${file.lastPathSegment}")
-                storageRef.putFile(file).addOnProgressListener {
+                val byteArrayOutputStream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream)
+                val data = byteArrayOutputStream.toByteArray()
+                val storageRef = storage.reference.child("${user.uid}/$name.jpg")
+                storageRef.putBytes(data).addOnProgressListener {
                     trySend(LoadingState.Loading((100 * it.bytesTransferred) / it.totalByteCount))
                 }.addOnCompleteListener {
                     storageRef.downloadUrl.addOnCompleteListener {
@@ -27,6 +29,8 @@ class ImageRepositoryImpl(
                     }
                 }.addOnFailureListener {
                     trySend(LoadingState.Error(it.fillInStackTrace()))
+                }.addOnCanceledListener {
+                    storageRef.delete()
                 }
             } catch (e: Exception) {
                 trySend(LoadingState.Error(e))

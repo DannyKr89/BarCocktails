@@ -2,7 +2,7 @@ package com.dk.barcocktails.ui.utils.validator
 
 import java.util.regex.Pattern
 
-class Validator {
+class Validator() {
 
     fun check(input: String, type: InputType): Pair<Boolean, ErrorEnum?> {
         return when (type) {
@@ -33,11 +33,7 @@ class Validator {
 
     companion object {
         private val PASSWORD_PATTERN: Pattern = Pattern.compile(
-            "^" +
-                    "(?=.*[a-zA-Z])" +
-                    "(?=\\S+$)" +
-                    ".{6,}" +
-                    "$"
+            "^" + "(?=.*[a-zA-Z])" + "(?=\\S+$)" + ".{6,}" + "$"
         )
     }
 }

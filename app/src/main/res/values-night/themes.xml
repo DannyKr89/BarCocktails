@@ -5,6 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorAccent">@color/white</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorPrimaryContainer">#1A3DFF</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
     </style>
 </resources>

@@ -11,9 +11,9 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val _signInState: MutableLiveData<SignInSignUpState> = MutableLiveData(),
-    private val signInUseCase: SignInUseCase
+    private val signInUseCase: SignInUseCase,
 
-) : ViewModel() {
+    ) : ViewModel() {
 
     val signInState: LiveData<SignInSignUpState> get() = _signInState
 
@@ -21,11 +21,7 @@ class LoginViewModel(
     fun signInRequest(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             signInUseCase.invoke(email, password).collect {
-                if (it) {
-                    _signInState.postValue(SignInSignUpState.Success("Success"))
-                } else {
-                    _signInState.postValue(SignInSignUpState.Error(Throwable("Error")))
-                }
+                _signInState.postValue(it)
             }
 
         }

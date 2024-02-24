@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Барная карта</string>
+    <string name="login">Вход</string>
+    <string name="email">Почта</string>
+    <string name="name">Наименование</string>
+    <string name="password">Пароль</string>
+    <string name="require_field">Обязательное поле</string>
+    <string name="valid_email">" Пожалуйста, введите действительный адрес электронной почты"</string>
+    <string name="valid_password">Слабый пароль, минимум 6 символов</string>
+    <string name="sign_in">Войти</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="cocktails">Коктейли</string>
+    <string name="profile">Профиль</string>
+    <string name="name_cocktail">Название коктейля</string>
+    <string name="method_cocktail">Метод</string>
+    <string name="garnier_cocktail">Украшение</string>
+    <string name="add_cocktail">Добавить коктейль</string>
+    <string name="value">Значение</string>
+    <string name="name_ingredient">Название ингредиента</string>
+    <string name="sign_out">Выйти</string>
+    <string name="delete">Удалить</string>
+    <string name="admin_password">Пароль администратора</string>
+    <string name="organization">Организация</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="hint_not_organization">Этот акаунт не принадлежит организации</string>
+    <string name="hint_enter_password">Пожалуйста введите пароль для редактирования базы данных</string>
+    <string name="hint_is_admin">Вы администратор, теперь можно редактировать базу данных</string>
+    <string name="write_to_developer">Написать разработчику</string>
+    <string name="send_message">Отправить сообщение</string>
+    <string name="description_cocktail">Описание</string>
+    <string name="equal_password">Пароли не должны быть одинаковыми</string>
+</resources>

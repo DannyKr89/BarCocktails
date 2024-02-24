@@ -10,15 +10,15 @@ import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentLoginBinding
 import com.dk.barcocktails.domain.login.state.SignInSignUpState
-import com.dk.barcocktails.ui.utils.validator.ErrorEnum
-import com.dk.barcocktails.ui.utils.validator.InputType
-import com.dk.barcocktails.ui.utils.validator.Validator
+import com.dk.barcocktails.ui.main.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding: FragmentLoginBinding get() = _binding!!
+    private val mainViewModel: MainViewModel by activityViewModel()
 
     private val viewModel: LoginViewModel by viewModel()
 
@@ -43,6 +43,7 @@ class LoginFragment : Fragment() {
                 }
 
                 is SignInSignUpState.Success -> {
+                    mainViewModel.user(it.user)
                     findNavController().navigate(R.id.action_loginFragment_to_cocktailsFragment)
                 }
             }
@@ -55,15 +56,12 @@ class LoginFragment : Fragment() {
                 val email = etEmail.text.toString().trim()
                 val password = etPassword.text.toString().trim()
 
-                val emailValidator = Validator().check(email, InputType.EMAIL)
-
-                if (emailValidator.first && password.isNotEmpty()) {
+                if (email.isNotEmpty() && password.isNotEmpty()) {
                     viewModel.signInRequest(email, password)
                 } else {
-                    tilEmail.error = when (emailValidator.second) {
-                        ErrorEnum.REQUIRE -> resources.getString(R.string.require_field)
-                        ErrorEnum.VALID -> resources.getString(R.string.valid_email)
-                        null -> null
+                    tilEmail.error = when (email.isNotEmpty()) {
+                        true -> null
+                        false -> resources.getString(R.string.require_field)
                     }
                     tilPassword.error = when (password.isNotEmpty()) {
                         true -> null
