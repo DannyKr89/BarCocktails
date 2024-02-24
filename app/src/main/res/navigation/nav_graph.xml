@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_cocktails_list_to_cocktailDetailsFragment"
             app:destination="@id/cocktailDetailsFragment" />
+        <action
+            android:id="@+id/action_cocktails_list_to_profile"
+            app:destination="@id/profile" />
     </fragment>
     <fragment
         android:id="@+id/profile"

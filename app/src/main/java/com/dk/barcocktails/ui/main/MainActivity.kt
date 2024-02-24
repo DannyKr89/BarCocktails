@@ -7,17 +7,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.yandex.mobile.ads.common.MobileAds
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -29,17 +26,6 @@ class MainActivity : AppCompatActivity() {
     private val firebaseAuth: FirebaseAuth = get()
     private val viewModel: MainViewModel by viewModel()
 
-    private val destinationListener by lazy {
-        NavController.OnDestinationChangedListener { _, destination, _ ->
-            with(binding) {
-                navView.isVisible =
-                    destination.id != R.id.loginFragment && destination.id != R.id.signUpFragment
-            }
-            supportActionBar?.title = destination.label
-        }
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -49,8 +35,6 @@ class MainActivity : AppCompatActivity() {
         setUpToolbar()
         setUpNavigation()
         checkCurrentUser(savedInstanceState)
-        MobileAds.initialize(this) {
-        }
     }
 
     private fun checkStoragePermission() {
@@ -80,11 +64,9 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.findNavController()
 
         val appBarConfiguration =
-            AppBarConfiguration(setOf(R.id.loginFragment, R.id.cocktails_list, R.id.profile))
+            AppBarConfiguration(setOf(R.id.loginFragment, R.id.cocktails_list))
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
-        binding.navView.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener(destinationListener)
     }
 
     private fun setUpToolbar() {

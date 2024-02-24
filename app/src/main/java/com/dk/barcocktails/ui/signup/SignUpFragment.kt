@@ -11,6 +11,7 @@ import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentSignUpBinding
 import com.dk.barcocktails.domain.login.state.SignInSignUpState
 import com.dk.barcocktails.ui.utils.validator.ErrorEnum
+import com.dk.barcocktails.ui.utils.validator.InputType
 import com.dk.barcocktails.ui.utils.validator.Validator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -22,8 +23,7 @@ class SignUpFragment : Fragment() {
 
     private val viewModel: SignUpViewModel by viewModel()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         _binding = FragmentSignUpBinding.inflate(inflater)
@@ -59,11 +59,16 @@ class SignUpFragment : Fragment() {
                 val name = etName.text.toString().trim()
                 val adminPassword = etAdminPassword.text.toString().trim()
 
-                val emailValidator = Validator.validateEmail(email)
-                val passwordValidator = Validator.validatePassword(password)
-                val adminPasswordValidator = Validator.validatePassword(adminPassword)
+                val emailValidator = Validator().check(email, InputType.EMAIL)
+                val passwordValidator = Validator().check(password, InputType.PASSWORD)
+                val adminPasswordValidator = Validator().check(adminPassword, InputType.PASSWORD)
 
-                if (emailValidator.first && passwordValidator.first && name.isNotEmpty() && adminPasswordValidator.first && password != adminPassword) {
+                if (emailValidator.first
+                    && passwordValidator.first
+                    && name.isNotEmpty()
+                    && adminPasswordValidator.first
+                    && password != adminPassword
+                ) {
                     viewModel.signUpRequest(email, password, name, adminPassword)
                 } else if (password == adminPassword) {
                     tilAdminPassword.error = resources.getString(R.string.equal_password)

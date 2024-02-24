@@ -2,9 +2,13 @@ package com.dk.barcocktails.ui.cocktails
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -25,7 +29,7 @@ import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CocktailsFragment : Fragment() {
+class CocktailsFragment : MenuProvider, Fragment() {
 
     private var _binding: FragmentCocktailsBinding? = null
     private val binding: FragmentCocktailsBinding get() = _binding!!
@@ -48,6 +52,7 @@ class CocktailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner)
 
         initViewModel()
         initViews()
@@ -106,8 +111,8 @@ class CocktailsFragment : Fragment() {
 
     private fun showData(data: List<Item>) {
         with(binding) {
-            val list = prepareAd(data)
-            adapter.submitList(list)
+//            val list = prepareAd(data)
+            adapter.submitList(data)
             adapter.clickListener = {
                 mainViewModel.cocktail(it)
                 findNavController().navigate(R.id.action_cocktails_list_to_cocktailDetailsFragment)
@@ -162,5 +167,19 @@ class CocktailsFragment : Fragment() {
         listener.remove()
         _binding = null
         super.onDestroyView()
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.menu_cocktails, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.profile -> {
+                findNavController().navigate(R.id.action_cocktails_list_to_profile)
+                return true
+            }
+        }
+        return false
     }
 }

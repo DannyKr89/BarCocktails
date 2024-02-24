@@ -11,6 +11,7 @@ import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentLoginBinding
 import com.dk.barcocktails.domain.login.state.SignInSignUpState
 import com.dk.barcocktails.ui.utils.validator.ErrorEnum
+import com.dk.barcocktails.ui.utils.validator.InputType
 import com.dk.barcocktails.ui.utils.validator.Validator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -22,8 +23,7 @@ class LoginFragment : Fragment() {
     private val viewModel: LoginViewModel by viewModel()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater)
         return binding.root
@@ -39,8 +39,7 @@ class LoginFragment : Fragment() {
         viewModel.signInState.observe(viewLifecycleOwner) {
             when (it) {
                 is SignInSignUpState.Error -> {
-                    Toast.makeText(requireContext(), it.error.message, Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(requireContext(), it.error.message, Toast.LENGTH_SHORT).show()
                 }
 
                 is SignInSignUpState.Success -> {
@@ -56,10 +55,9 @@ class LoginFragment : Fragment() {
                 val email = etEmail.text.toString().trim()
                 val password = etPassword.text.toString().trim()
 
-                val emailValidator = Validator.validateEmail(email)
-                val passwordValidator = Validator.validateLoginPassword(password)
+                val emailValidator = Validator().check(email, InputType.EMAIL)
 
-                if (emailValidator.first && passwordValidator.first) {
+                if (emailValidator.first && password.isNotEmpty()) {
                     viewModel.signInRequest(email, password)
                 } else {
                     tilEmail.error = when (emailValidator.second) {
@@ -67,10 +65,9 @@ class LoginFragment : Fragment() {
                         ErrorEnum.VALID -> resources.getString(R.string.valid_email)
                         null -> null
                     }
-                    tilPassword.error = when (passwordValidator.second) {
-                        ErrorEnum.REQUIRE -> resources.getString(R.string.require_field)
-                        ErrorEnum.VALID -> resources.getString(R.string.valid_password)
-                        null -> null
+                    tilPassword.error = when (password.isNotEmpty()) {
+                        true -> null
+                        false -> resources.getString(R.string.require_field)
                     }
                 }
             }
