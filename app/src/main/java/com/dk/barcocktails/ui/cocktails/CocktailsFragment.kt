@@ -19,7 +19,7 @@ import com.dk.barcocktails.common.USERS
 import com.dk.barcocktails.databinding.FragmentCocktailsBinding
 import com.dk.barcocktails.domain.cocktails.model.Banner
 import com.dk.barcocktails.domain.cocktails.model.Item
-import com.dk.barcocktails.domain.cocktails.state.LoadingState
+import com.dk.barcocktails.domain.state.LoadingState
 import com.dk.barcocktails.ui.main.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

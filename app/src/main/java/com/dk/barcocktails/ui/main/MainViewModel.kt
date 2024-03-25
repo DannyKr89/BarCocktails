@@ -12,17 +12,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val _liveDataCheckOrganization: MutableLiveData<Boolean> = MutableLiveData(),
     private val checkOrganizationUseCase: CheckOrganizationUseCase,
-    private val _liveDataCheckPassword: MutableLiveData<Boolean> = MutableLiveData(),
     private val checkPasswordUseCase: CheckPasswordUseCase,
-    private val _liveDataCocktail: MutableLiveData<Cocktail> = MutableLiveData(),
-    private val _liveDataUser: MutableLiveData<User> = MutableLiveData(),
 ) : ViewModel() {
 
+    private val _liveDataCheckOrganization: MutableLiveData<Boolean> = MutableLiveData()
     val liveDataCheckOrganization: LiveData<Boolean> get() = _liveDataCheckOrganization
+
+    private val _liveDataCheckPassword: MutableLiveData<Boolean> = MutableLiveData()
     val liveDataCheckPassword: LiveData<Boolean> get() = _liveDataCheckPassword
+
+    private val _liveDataCocktail: MutableLiveData<Cocktail> = MutableLiveData()
     val liveDataCocktail: LiveData<Cocktail> get() = _liveDataCocktail
+
+    private val _liveDataUser: MutableLiveData<User> = MutableLiveData()
     val liveDataUser: LiveData<User> get() = _liveDataUser
 
     private var _pass = ""

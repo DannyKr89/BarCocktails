@@ -17,7 +17,7 @@ import coil.load
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentNewCocktailBinding
 import com.dk.barcocktails.databinding.ItemIngredientBinding
-import com.dk.barcocktails.domain.cocktails.state.LoadingState
+import com.dk.barcocktails.domain.state.LoadingState
 import org.koin.android.ext.android.get
 import kotlin.collections.set
 
@@ -32,7 +32,7 @@ class NewCocktailFragment : Fragment() {
     private var method = ""
     private var garnier = ""
     private var description = ""
-    private val ingredients = HashMap<String, Int>()
+    private val ingredients = LinkedHashMap<String, Int>()
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -148,6 +148,7 @@ class NewCocktailFragment : Fragment() {
             }
         }
     }
+
     private fun createCocktail() {
         with(binding) {
             ivImageCocktail.load(uriImage)

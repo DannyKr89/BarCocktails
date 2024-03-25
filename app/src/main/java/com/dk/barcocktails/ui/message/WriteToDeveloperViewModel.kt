@@ -9,10 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class WriteToDeveloperViewModel(
-    private val _liveData: MutableLiveData<Boolean> = MutableLiveData(),
     private val sendMessageUseCase: SendMessageUseCase
 ) : ViewModel() {
 
+    private val _liveData: MutableLiveData<Boolean> = MutableLiveData()
     val liveData: LiveData<Boolean> get() = _liveData
 
 

@@ -41,7 +41,6 @@ class CocktailDetailsFragment() : BottomSheetDialogFragment() {
     }
 
     private fun showData(cocktail: Cocktail?) {
-        println(cocktail)
         if (cocktail != null) {
             with(binding) {
                 if (cocktail.image.isNotEmpty()) {

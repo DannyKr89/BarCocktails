@@ -11,9 +11,10 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val signOutUseCase: SignOutUseCase,
-    private val _liveDataLoadProfile: MutableLiveData<String> = MutableLiveData(),
     private val loadProfileUseCase: LoadProfileUseCase
 ) : ViewModel() {
+
+    private val _liveDataLoadProfile: MutableLiveData<String> = MutableLiveData()
     val liveDataLoadProfile: LiveData<String> get() = _liveDataLoadProfile
 
     init {

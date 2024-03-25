@@ -1,8 +1,8 @@
 package com.dk.barcocktails.domain.image.usecase
 
 import android.graphics.Bitmap
-import com.dk.barcocktails.domain.cocktails.state.LoadingState
 import com.dk.barcocktails.domain.image.repository.ImageRepository
+import com.dk.barcocktails.domain.state.LoadingState
 import kotlinx.coroutines.flow.Flow
 
 class LoadImageUseCase(private val imageRepository: ImageRepository) {

@@ -7,7 +7,7 @@ import com.dk.barcocktails.common.ORGANIZATION
 import com.dk.barcocktails.common.USERS
 import com.dk.barcocktails.domain.login.model.User
 import com.dk.barcocktails.domain.login.repository.LoginRepository
-import com.dk.barcocktails.domain.login.state.SignInSignUpState
+import com.dk.barcocktails.domain.state.LoadingState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.flow
@@ -18,15 +18,15 @@ class FirebaseAuthRepositoryImpl(
     private val db: FirebaseFirestore
 ) : LoginRepository {
 
-    override suspend fun signIn(email: String, password: String) = flow<SignInSignUpState> {
+    override suspend fun signIn(email: String, password: String) = flow {
         try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             Log.d("FBA-Success", result.user.toString())
             val user = User(result.user?.uid)
-            emit(SignInSignUpState.Success(user))
+            emit(LoadingState.Success(user))
         } catch (e: Exception) {
             Log.d("FBA-Error", e.message.toString())
-            emit(SignInSignUpState.Error(e))
+            emit(LoadingState.Error(e))
         }
     }
 
@@ -35,7 +35,7 @@ class FirebaseAuthRepositoryImpl(
         password: String,
         name: String,
         adminPassword: String
-    ) = flow<SignInSignUpState> {
+    ) = flow {
         val user = hashMapOf<String, Any>()
         if (name.isEmpty() || adminPassword.isEmpty()) {
             user[ORGANIZATION] = false
@@ -49,10 +49,10 @@ class FirebaseAuthRepositoryImpl(
             val userUid = result.user?.uid
             userUid?.let {
                 db.collection(USERS).document(it).set(user).await()
-                emit(SignInSignUpState.Success(User(userUid)))
+                emit(LoadingState.Success(User(userUid)))
             }
         } catch (e: Exception) {
-            emit(SignInSignUpState.Error(e))
+            emit(LoadingState.Error(e))
         }
     }
 

@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentLoginBinding
-import com.dk.barcocktails.domain.login.state.SignInSignUpState
+import com.dk.barcocktails.domain.state.LoadingState
 import com.dk.barcocktails.ui.main.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -38,13 +38,17 @@ class LoginFragment : Fragment() {
     private fun initViewModel() {
         viewModel.signInState.observe(viewLifecycleOwner) {
             when (it) {
-                is SignInSignUpState.Error -> {
+                is LoadingState.Error -> {
                     Toast.makeText(requireContext(), it.error.message, Toast.LENGTH_SHORT).show()
                 }
 
-                is SignInSignUpState.Success -> {
-                    mainViewModel.user(it.user)
+                is LoadingState.Success -> {
+                    mainViewModel.user(it.data)
                     findNavController().navigate(R.id.action_loginFragment_to_cocktailsFragment)
+                }
+
+                is LoadingState.Loading -> {
+
                 }
             }
         }

@@ -4,18 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dk.barcocktails.domain.login.state.SignInSignUpState
+import com.dk.barcocktails.domain.login.model.User
 import com.dk.barcocktails.domain.login.usecase.SignInUseCase
+import com.dk.barcocktails.domain.state.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val _signInState: MutableLiveData<SignInSignUpState> = MutableLiveData(),
     private val signInUseCase: SignInUseCase,
 
     ) : ViewModel() {
 
-    val signInState: LiveData<SignInSignUpState> get() = _signInState
+
+    private val _signInState: MutableLiveData<LoadingState<User>> = MutableLiveData()
+    val signInState: LiveData<LoadingState<User>> get() = _signInState
 
 
     fun signInRequest(email: String, password: String) {

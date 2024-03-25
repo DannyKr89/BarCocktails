@@ -1,4 +1,4 @@
-package com.dk.barcocktails.domain.cocktails.state
+package com.dk.barcocktails.domain.state
 
 sealed class LoadingState<out T> {
 

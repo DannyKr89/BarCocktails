@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dk.barcocktails.R
 import com.dk.barcocktails.databinding.FragmentSignUpBinding
-import com.dk.barcocktails.domain.login.state.SignInSignUpState
+import com.dk.barcocktails.domain.state.LoadingState
 import com.dk.barcocktails.ui.utils.validator.ErrorEnum
 import com.dk.barcocktails.ui.utils.validator.InputType
 import com.dk.barcocktails.ui.utils.validator.Validator
@@ -39,9 +39,13 @@ class SignUpFragment : Fragment() {
     private fun initViewModel() {
         viewModel.signUpState.observe(viewLifecycleOwner) {
             when (it) {
-                is SignInSignUpState.Error -> {}
-                is SignInSignUpState.Success -> {
+                is LoadingState.Error -> {}
+                is LoadingState.Success -> {
                     findNavController().popBackStack()
+                }
+
+                is LoadingState.Loading -> {
+
                 }
             }
         }
